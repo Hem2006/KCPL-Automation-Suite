@@ -9,10 +9,22 @@ on:
     - cron: '0 23 * * *'  # 11 PM UTC daily
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   smoke-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -28,10 +40,26 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke tests
+        if: always()
         env:
           CI: true
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: npx playwright test --grep @smoke
+
+      - name: Generate Allure report
+        if: always()
+        run: npm run allure:generate
+
+      - name: Upload Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report/
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Upload HTML report
         if: always()
