@@ -10,6 +10,7 @@ export default defineConfig({
     ['html', { open: 'never' }],
     ['list'],
     ['allure-playwright'],
+    ...(process.env.CI ? [['./tests/reporters/email-reporter.ts'] as [string]] : []),
   ],
   use: {
     baseURL: 'https://dev.mykcpl.com',
