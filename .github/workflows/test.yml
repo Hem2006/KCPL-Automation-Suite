@@ -104,24 +104,36 @@ jobs:
           REPORT_URL: ${{ steps.vercel-deploy.outputs.url }}
         run: |
           node -e "
+          const fs = require('fs');
           const apiKey = process.env.RESEND_API_KEY;
           if (!apiKey) process.exit(0);
+
+          let summary = { passed: 0, failed: 0, flaky: 0, skipped: 0 };
+          try { summary = JSON.parse(fs.readFileSync('test-summary.json', 'utf8')); } catch {}
+          const total = summary.passed + summary.failed + summary.flaky + summary.skipped;
 
           const runNum    = process.env.RUN_NUMBER;
           const reportUrl = process.env.REPORT_URL || 'https://kcpl-automation-suite.vercel.app';
           const now       = new Date();
           const date      = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
           const time      = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
-          const divider   = '━'.repeat(60);
+          const label     = summary.failed > 0 ? summary.failed + ' FAILED' : 'ALL PASSED';
 
-          let body = divider + '\n';
-          body += '  KCPL Admin — Automated Test Report\n';
-          body += '  ' + date + '  |  ' + time + ' UTC  |  Run #' + runNum + '\n';
-          body += divider + '\n\n';
-          body += '  Report  : ' + reportUrl + '\n';
-          body += '\n' + divider + '\n';
-          body += '  Sent by KCPL Test Pipeline  |  github.com/Hem2006/KCPL-Automation-Suite\n';
-          body += divider + '\n';
+          const rows = [
+            ['Total',   total],
+            ['Passed',  summary.passed],
+            ['Failed',  summary.failed],
+            ['Flaky',   summary.flaky],
+            ['Skipped', summary.skipped],
+          ];
+          const table = rows.map(([k, v]) => k.padEnd(10) + ': ' + v).join('\n');
+
+          let body = 'KCPL Admin — Automated Test Report\n';
+          body += date + '  |  ' + time + ' UTC  |  Run #' + runNum + '\n';
+          body += '\n';
+          body += table + '\n';
+          body += '\n';
+          body += 'Report: ' + reportUrl + '\n';
 
           fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -129,7 +141,7 @@ jobs:
             body: JSON.stringify({
               from: 'KCPL Tests <onboarding@resend.dev>',
               to: ['hemindukuru@gmail.com'],
-              subject: 'KCPL Test Run — ' + date,
+              subject: 'KCPL Test Run — ' + label + ' — ' + date,
               text: body,
             }),
           })
