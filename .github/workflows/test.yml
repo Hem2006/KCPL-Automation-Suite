@@ -133,12 +133,25 @@ jobs:
           path: allure-report/
           retention-days: 30
 
+      - name: Deploy Allure report to Vercel
+        if: always()
+        id: vercel-deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          DEPLOY_URL=$(npx vercel deploy ./allure-report --prod --token="$VERCEL_TOKEN" --yes)
+          echo "url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed to: $DEPLOY_URL"
+
       - name: Send email summary
         if: always()
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           SHARD_STATUS: ${{ needs.smoke-tests.result }}
           RUN_NUMBER: ${{ github.run_number }}
+          REPORT_URL: ${{ steps.vercel-deploy.outputs.url }}
         run: |
           node -e "
           const apiKey = process.env.RESEND_API_KEY;
@@ -146,6 +159,7 @@ jobs:
 
           const status    = process.env.SHARD_STATUS;
           const runNum    = process.env.RUN_NUMBER;
+          const reportUrl = process.env.REPORT_URL || 'https://kcpl-automation-suite.vercel.app';
           const allPassed = status === 'success';
           const label     = allPassed ? 'ALL PASSED' : status.toUpperCase();
           const now       = new Date();
@@ -159,7 +173,7 @@ jobs:
           body += divider + '\n\n';
           body += '  Status  : ' + label + '\n';
           body += '  Shards  : 3 parallel runners\n';
-          body += '  Report  : download allure-report-' + runNum + ' from Actions artifacts\n';
+          body += '  Report  : ' + reportUrl + '\n';
           body += '\n' + divider + '\n';
           body += '  Sent by KCPL Test Pipeline  |  github.com/Hem2006/KCPL-Automation-Suite\n';
           body += divider + '\n';
