@@ -31,8 +31,10 @@ async function ensureLegalOpen(page: Page) {
     });
     await noBackdrop(page).catch(() => {});
     await page.waitForTimeout(1000);
+    await legalTab.scrollIntoViewIfNeeded({ timeout: 10000 }).catch(() => {});
     await legalTab.waitFor({ state: 'visible', timeout: 10000 });
   }
+  await legalTab.scrollIntoViewIfNeeded().catch(() => {});
   await legalTab.click();
   await noBackdrop(page).catch(() => {});
   await legalProspectBtn.waitFor({ state: 'visible', timeout: 15000 });

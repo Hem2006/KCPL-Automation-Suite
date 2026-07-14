@@ -21,8 +21,10 @@ async function ensureAuditOpen(page: Page) {
     });
     await noBackdrop(page);
     await page.waitForTimeout(1000);
+    await auditTab.scrollIntoViewIfNeeded({ timeout: 10000 }).catch(() => {});
     await auditTab.waitFor({ state: 'visible', timeout: 10000 });
   }
+  await auditTab.scrollIntoViewIfNeeded().catch(() => {});
   await auditTab.click();
   await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
   await schemeItem.waitFor({ state: 'visible', timeout: 15000 });

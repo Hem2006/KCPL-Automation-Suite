@@ -77,8 +77,10 @@ async function ensureAccountsCreationOpen(page: Page) {
     });
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     await page.waitForTimeout(1000);
+    await accountsTab.scrollIntoViewIfNeeded({ timeout: 10000 }).catch(() => {});
     await accountsTab.waitFor({ state: 'visible', timeout: 10000 });
   }
+  await accountsTab.scrollIntoViewIfNeeded().catch(() => {});
   await accountsTab.click({ timeout: 20000 });
   await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
 
@@ -691,7 +693,7 @@ test.describe('Accounts - Creation - Smoke @smoke', () => {
 
     await expect(
       page.getByText(/success/i).first()
-        .or(page.getByText('Bank Information'))
+        .or(page.getByText('Bank information saved', { exact: false }))
         .or(page.getByText(/saved/i).first())
     ).toBeVisible({ timeout: 20000 });
     await expect(page.locator('.MuiAlert-colorError, .MuiAlert-standardError, .MuiAlert-filledError')).toHaveCount(0);

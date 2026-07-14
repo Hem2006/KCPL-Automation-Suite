@@ -67,8 +67,10 @@ async function ensureHROpen(page: Page) {
     });
     await noBackdrop(page).catch(() => {});
     await page.waitForTimeout(1000);
+    await hrTab.scrollIntoViewIfNeeded({ timeout: 10000 }).catch(() => {});
     await hrTab.waitFor({ state: 'visible', timeout: 10000 });
   }
+  await hrTab.scrollIntoViewIfNeeded().catch(() => {});
   await hrTab.click();
   await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
   await employeeBtn.waitFor({ state: 'visible', timeout: 15000 });

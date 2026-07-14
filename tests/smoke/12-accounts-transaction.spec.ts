@@ -39,8 +39,10 @@ async function ensureAccountsTransactionOpen(page: Page) {
       });
       await noBackdrop(page);
       await page.waitForTimeout(1000);
+      await accountsTab.scrollIntoViewIfNeeded({ timeout: 10000 }).catch(() => {});
       await accountsTab.waitFor({ state: 'visible', timeout: 10000 });
     }
+    await accountsTab.scrollIntoViewIfNeeded().catch(() => {});
     await accountsTab.click();
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     await txBtn.waitFor({ state: 'visible', timeout: 15000 });
