@@ -23,9 +23,10 @@ export class LoginPage {
     await this.page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
 
     if (process.env.CI) {
-      this.page.on('pageerror', err =>
-        console.error('[PAGE JS ERROR]', err.message),
-      );
+      this.page.on('pageerror', err => {
+        console.error('[PAGE JS ERROR]', err.message);
+        console.error('[PAGE JS STACK]', err.stack);
+      });
       this.page.on('requestfailed', req =>
         console.error('[REQUEST FAILED]', req.url(), req.failure()?.errorText),
       );
