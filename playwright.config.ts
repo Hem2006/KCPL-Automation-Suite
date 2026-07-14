@@ -15,8 +15,8 @@ export default defineConfig({
   use: {
     baseURL: 'https://dev.mykcpl.com',
     trace: 'on-first-retry',
-    screenshot: 'on',
-    video: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     actionTimeout: process.env.CI ? 30000 : 15000,
     navigationTimeout: process.env.CI ? 60000 : 30000,
     launchOptions: {
