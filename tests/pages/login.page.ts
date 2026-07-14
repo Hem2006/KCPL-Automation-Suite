@@ -20,6 +20,7 @@ export class LoginPage {
   }
 
   async goto() {
+    await this.page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
     await this.page.goto('/admin/index.html');
     await this.usernameInput.waitFor({ state: 'visible', timeout: 20000 });
   }

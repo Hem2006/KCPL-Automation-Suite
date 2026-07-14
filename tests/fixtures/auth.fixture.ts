@@ -15,6 +15,7 @@ type AuthWorkerFixtures = {
 export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
   sharedContext: [async ({ browser }, use) => {
     const context = await browser.newContext();
+    await context.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
     await use(context);
     await context.close();
   }, { scope: 'worker' }],
