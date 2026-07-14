@@ -19,9 +19,75 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ─── PARALLEL SHARDS ────────────────────────────────────────────────────────
   smoke-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false          # don't cancel other shards if one fails
+      matrix:
+        shard: [1, 2, 3]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'           # caches node_modules between runs
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install system deps (browser already cached)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Run smoke tests (shard ${{ matrix.shard }}/3)
+        env:
+          CI: true
+        run: npx playwright test --grep @smoke --shard=${{ matrix.shard }}/3
+
+      - name: Upload allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-shard-${{ matrix.shard }}
+          path: allure-results/
+          retention-days: 1     # only needed until report job runs
+
+      - name: Upload playwright report (shard ${{ matrix.shard }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_number }}-shard-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results (shard ${{ matrix.shard }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_number }}-shard-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 14
+
+  # ─── MERGE RESULTS & DEPLOY REPORT ─────────────────────────────────────────
+  report:
+    needs: smoke-tests
+    if: always()
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -32,47 +98,84 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+      - name: Download allure results — shard 1
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-shard-1
+          path: allure-results/
 
-      - name: Run smoke tests
-        if: always()
-        env:
-          CI: true
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: npx playwright test --grep @smoke
+      - name: Download allure results — shard 2
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-shard-2
+          path: allure-results/
 
-      - name: Generate Allure report
-        if: always()
+      - name: Download allure results — shard 3
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-shard-3
+          path: allure-results/
+
+      - name: Generate merged Allure report
         run: npm run allure:generate
 
       - name: Upload Pages artifact
-        if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-report/
 
       - name: Deploy to GitHub Pages
-        if: always()
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Upload HTML report
+      - name: Send email summary
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ github.run_number }}
-          path: playwright-report/
-          retention-days: 30
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SHARD_STATUS: ${{ needs.smoke-tests.result }}
+          RUN_NUMBER: ${{ github.run_number }}
+          REPORT_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          node -e "
+          const apiKey = process.env.RESEND_API_KEY;
+          if (!apiKey) process.exit(0);
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ github.run_number }}
-          path: test-results/
-          retention-days: 14
+          const status   = process.env.SHARD_STATUS;
+          const runNum   = process.env.RUN_NUMBER;
+          const url      = process.env.REPORT_URL ?? '';
+          const allPassed = status === 'success';
+          const label   = allPassed ? 'ALL PASSED' : status.toUpperCase();
+          const now     = new Date();
+          const date    = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+          const time    = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+          const divider = '━'.repeat(60);
+
+          let body = divider + '\n';
+          body += '  KCPL Admin — Automated Test Report\n';
+          body += '  ' + date + '  |  ' + time + ' UTC  |  Run #' + runNum + '\n';
+          body += divider + '\n\n';
+          body += '  Status  : ' + label + '\n';
+          body += '  Shards  : 3 parallel runners\n';
+          if (url) body += '  Report  : ' + url + '\n';
+          body += '\n' + divider + '\n';
+          body += '  Sent by KCPL Test Pipeline  |  github.com/Hem2006/KCPL-Automation-Suite\n';
+          body += divider + '\n';
+
+          fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: 'KCPL Tests <onboarding@resend.dev>',
+              to: ['hemindukuru@gmail.com'],
+              subject: 'KCPL Test Run — ' + label + ' — ' + date,
+              text: body,
+            }),
+          })
+          .then(() => console.log('[EMAIL] Report sent to hemindukuru@gmail.com'))
+          .catch(err => console.error('[EMAIL] Failed:', err));
+          "
