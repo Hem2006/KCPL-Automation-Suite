@@ -21,7 +21,21 @@ export class LoginPage {
 
   async goto() {
     await this.page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
+
+    if (process.env.CI) {
+      this.page.on('pageerror', err =>
+        console.error('[PAGE JS ERROR]', err.message),
+      );
+      this.page.on('requestfailed', req =>
+        console.error('[REQUEST FAILED]', req.url(), req.failure()?.errorText),
+      );
+      this.page.on('console', msg => {
+        if (msg.type() === 'error') console.error('[CONSOLE ERROR]', msg.text());
+      });
+    }
+
     await this.page.goto('/admin/index.html');
+    await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
     await this.usernameInput.waitFor({ state: 'visible', timeout: 20000 });
   }
 
