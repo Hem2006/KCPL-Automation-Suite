@@ -232,7 +232,7 @@ test.describe('Creation - Smoke @smoke', () => {
 
   test('generate payable — all radio buttons open their tables', async ({ authenticatedPage: page }) => {
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 30000 });
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
 
     const radios = [
@@ -248,13 +248,25 @@ test.describe('Creation - Smoke @smoke', () => {
       await noBackdrop(page);
       await expect(page.getByRole('grid')).toBeVisible({ timeout: 15000 });
     }
+
+    // Restore the default radio (has data) — the shared page carries this state
+    // into whichever test runs next, and "Cancellation for Group tranfer" (the
+    // last radio above) has zero rows, which breaks tests expecting a populated grid.
+    await page.getByRole('radio', { name: 'Cancellation chit' }).click();
+    await expect(page.getByRole('radio', { name: 'Cancellation chit' })).toBeChecked({ timeout: 10000 });
+    await noBackdrop(page);
   });
 
   // ── Generate Payable form field interactions ──────────────────────────────
 
   test('generate payable form — edit narration field', async ({ authenticatedPage: page, sidebar }) => {
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 60000 });
+    // The app remembers the last-selected radio across navigations (even a fresh
+    // "Generate payable" click) — force it back to the one radio guaranteed to have rows.
+    await page.getByRole('radio', { name: 'Cancellation chit' }).click();
+    await expect(page.getByRole('radio', { name: 'Cancellation chit' })).toBeChecked({ timeout: 10000 });
+    await noBackdrop(page);
     await page.locator('.MuiDataGrid-row').first().waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
 
@@ -275,13 +287,20 @@ test.describe('Creation - Smoke @smoke', () => {
       await page.getByText('Generate payable', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     }
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 30000 });
+    // Label text depends on the currently selected radio (e.g. "Total Cancellation
+    // Chit Count") — match generically instead of assuming a specific radio's label.
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
   });
 
   test('generate payable form — delete clears narration field', async ({ authenticatedPage: page, sidebar }) => {
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 60000 });
+    // The app remembers the last-selected radio across navigations (even a fresh
+    // "Generate payable" click) — force it back to the one radio guaranteed to have rows.
+    await page.getByRole('radio', { name: 'Cancellation chit' }).click();
+    await expect(page.getByRole('radio', { name: 'Cancellation chit' })).toBeChecked({ timeout: 10000 });
+    await noBackdrop(page);
     await page.locator('.MuiDataGrid-row').first().waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
 
@@ -305,7 +324,9 @@ test.describe('Creation - Smoke @smoke', () => {
       await page.getByText('Generate payable', { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
     }
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 30000 });
+    // Label text depends on the currently selected radio (e.g. "Total Cancellation
+    // Chit Count") — match generically instead of assuming a specific radio's label.
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
   });
 
@@ -313,7 +334,12 @@ test.describe('Creation - Smoke @smoke', () => {
 
   test('generate payable — GENERATEPAYABLE fills cancellation form and saves', async ({ authenticatedPage: page }) => {
     await page.getByText('Generate payable', { exact: true }).click();
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 60000 });
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 60000 });
+    // The app remembers the last-selected radio across navigations (even a fresh
+    // "Generate payable" click) — force it back to the one radio guaranteed to have rows.
+    await page.getByRole('radio', { name: 'Cancellation chit' }).click();
+    await expect(page.getByRole('radio', { name: 'Cancellation chit' })).toBeChecked({ timeout: 10000 });
+    await noBackdrop(page);
     await page.locator('.MuiDataGrid-row').first().waitFor({ state: 'visible', timeout: 60000 });
     await noBackdrop(page);
 
@@ -346,7 +372,9 @@ test.describe('Creation - Smoke @smoke', () => {
     await noBackdrop(page);
     await page.getByRole('button', { name: 'Save' }).click();
 
-    // After save, app should redirect back to the generate payable list
-    await page.getByText(/Total Group Tranfer Count/).waitFor({ state: 'visible', timeout: 30000 });
+    // After save, app should redirect back to the generate payable list.
+    // Label text depends on the currently selected radio (e.g. "Total Cancellation
+    // Chit Count") — match generically instead of assuming a specific radio's label.
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
   });
 });
