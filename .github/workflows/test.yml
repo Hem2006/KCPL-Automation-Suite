@@ -103,10 +103,10 @@ jobs:
           RUN_NUMBER: ${{ github.run_number }}
           REPORT_URL: ${{ steps.vercel-deploy.outputs.url }}
         run: |
-          node -e "
+          node -e "(async () => {
           const fs = require('fs');
           const apiKey = process.env.RESEND_API_KEY;
-          if (!apiKey) process.exit(0);
+          if (!apiKey) { console.log('[EMAIL] No RESEND_API_KEY, skipping'); process.exit(0); }
 
           let summary = { passed: 0, failed: 0, flaky: 0, skipped: 0 };
           try { summary = JSON.parse(fs.readFileSync('test-summary.json', 'utf8')); } catch {}
@@ -135,7 +135,7 @@ jobs:
           body += '\n';
           body += 'Report: ' + reportUrl + '\n';
 
-          fetch('https://api.resend.com/emails', {
+          const res = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -144,7 +144,8 @@ jobs:
               subject: 'KCPL Test Run — ' + label + ' — ' + date,
               text: body,
             }),
-          })
-          .then(() => console.log('[EMAIL] Report sent to hemindukuru@gmail.com'))
-          .catch(err => console.error('[EMAIL] Failed:', err));
-          "
+          });
+          const json = await res.json();
+          if (res.ok) console.log('[EMAIL] Sent to hemindukuru@gmail.com', json.id);
+          else console.error('[EMAIL] Failed:', res.status, json);
+          })();"
