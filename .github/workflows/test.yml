@@ -17,14 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # ─── PARALLEL SHARDS ────────────────────────────────────────────────────────
   smoke-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
-    strategy:
-      fail-fast: false          # don't cancel other shards if one fails
-      matrix:
-        shard: [1, 2, 3]
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
@@ -55,74 +50,14 @@ jobs:
       - name: Connectivity check
         run: curl -v --max-time 15 https://dev.mykcpl.com/admin/index.html || true
 
-      - name: Run smoke tests (shard ${{ matrix.shard }}/3)
+      - name: Run smoke tests
+        if: always()
         env:
           CI: true
-        run: npx playwright test --grep @smoke --shard=${{ matrix.shard }}/3
+        run: npx playwright test --grep @smoke
 
-      - name: Upload allure results
+      - name: Generate Allure report
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-shard-${{ matrix.shard }}
-          path: allure-results/
-          retention-days: 1
-
-      - name: Upload playwright report (shard ${{ matrix.shard }})
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-${{ github.run_number }}-shard-${{ matrix.shard }}
-          path: playwright-report/
-          retention-days: 30
-
-      - name: Upload test results (shard ${{ matrix.shard }})
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ github.run_number }}-shard-${{ matrix.shard }}
-          path: test-results/
-          retention-days: 14
-
-  # ─── MERGE RESULTS & GENERATE REPORT ───────────────────────────────────────
-  report:
-    needs: smoke-tests
-    if: always()
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Download allure results — shard 1
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: allure-results-shard-1
-          path: allure-results/
-
-      - name: Download allure results — shard 2
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: allure-results-shard-2
-          path: allure-results/
-
-      - name: Download allure results — shard 3
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: allure-results-shard-3
-          path: allure-results/
-
-      - name: Generate merged Allure report
         run: npm run allure:generate
 
       - name: Upload Allure report
@@ -145,11 +80,26 @@ jobs:
           echo "url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
           echo "Deployed to: $DEPLOY_URL"
 
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 14
+
       - name: Send email summary
         if: always()
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          SHARD_STATUS: ${{ needs.smoke-tests.result }}
           RUN_NUMBER: ${{ github.run_number }}
           REPORT_URL: ${{ steps.vercel-deploy.outputs.url }}
         run: |
@@ -157,11 +107,8 @@ jobs:
           const apiKey = process.env.RESEND_API_KEY;
           if (!apiKey) process.exit(0);
 
-          const status    = process.env.SHARD_STATUS;
           const runNum    = process.env.RUN_NUMBER;
           const reportUrl = process.env.REPORT_URL || 'https://kcpl-automation-suite.vercel.app';
-          const allPassed = status === 'success';
-          const label     = allPassed ? 'ALL PASSED' : status.toUpperCase();
           const now       = new Date();
           const date      = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
           const time      = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
@@ -171,8 +118,6 @@ jobs:
           body += '  KCPL Admin — Automated Test Report\n';
           body += '  ' + date + '  |  ' + time + ' UTC  |  Run #' + runNum + '\n';
           body += divider + '\n\n';
-          body += '  Status  : ' + label + '\n';
-          body += '  Shards  : 3 parallel runners\n';
           body += '  Report  : ' + reportUrl + '\n';
           body += '\n' + divider + '\n';
           body += '  Sent by KCPL Test Pipeline  |  github.com/Hem2006/KCPL-Automation-Suite\n';
@@ -184,7 +129,7 @@ jobs:
             body: JSON.stringify({
               from: 'KCPL Tests <onboarding@resend.dev>',
               to: ['hemindukuru@gmail.com'],
-              subject: 'KCPL Test Run — ' + label + ' — ' + date,
+              subject: 'KCPL Test Run — ' + date,
               text: body,
             }),
           })
