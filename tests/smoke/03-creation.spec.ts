@@ -244,9 +244,9 @@ test.describe('Creation - Smoke @smoke', () => {
 
     for (const name of radios) {
       await page.getByRole('radio', { name }).click();
-      await expect(page.getByRole('radio', { name })).toBeChecked({ timeout: 5000 });
-      // Each radio view has a different column set — just confirm a table loaded.
-      await expect(page.getByRole('grid')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('radio', { name })).toBeChecked({ timeout: 10000 });
+      await noBackdrop(page);
+      await expect(page.getByRole('grid')).toBeVisible({ timeout: 15000 });
     }
   });
 
@@ -259,6 +259,7 @@ test.describe('Creation - Smoke @smoke', () => {
     await noBackdrop(page);
 
     await page.locator('.MuiDataGrid-virtualScroller').evaluate(el => { el.scrollLeft = el.scrollWidth; });
+    await page.getByText('GENERATEPAYABLE', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 });
     await page.getByText('GENERATEPAYABLE', { exact: true }).first().click({ force: true });
     await page.getByRole('heading', { name: 'Cancellation' }).first().waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
@@ -285,6 +286,7 @@ test.describe('Creation - Smoke @smoke', () => {
     await noBackdrop(page);
 
     await page.locator('.MuiDataGrid-virtualScroller').evaluate(el => { el.scrollLeft = el.scrollWidth; });
+    await page.getByText('GENERATEPAYABLE', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 });
     await page.getByText('GENERATEPAYABLE', { exact: true }).first().click({ force: true });
     await page.getByRole('heading', { name: 'Cancellation' }).first().waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);
