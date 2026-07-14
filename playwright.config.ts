@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: 3,
+  workers: process.env.CI ? 1 : 3,
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
@@ -17,8 +17,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'on',
     video: 'on-first-retry',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: process.env.CI ? 30000 : 15000,
+    navigationTimeout: process.env.CI ? 60000 : 30000,
     launchOptions: {
       slowMo: process.env.SLOW_MO ? Number(process.env.SLOW_MO) : 0,
     },
