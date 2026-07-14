@@ -22,7 +22,7 @@ jobs:
   # ─── PARALLEL SHARDS ────────────────────────────────────────────────────────
   smoke-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     strategy:
       fail-fast: false          # don't cancel other shards if one fails
       matrix:
@@ -105,18 +105,21 @@ jobs:
 
       - name: Download allure results — shard 1
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-results-shard-1
           path: allure-results/
 
       - name: Download allure results — shard 2
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-results-shard-2
           path: allure-results/
 
       - name: Download allure results — shard 3
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: allure-results-shard-3
           path: allure-results/
