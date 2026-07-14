@@ -52,6 +52,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
+      - name: Connectivity check
+        run: curl -v --max-time 15 https://dev.mykcpl.com/admin/index.html || true
+
       - name: Run smoke tests (shard ${{ matrix.shard }}/3)
         env:
           CI: true
