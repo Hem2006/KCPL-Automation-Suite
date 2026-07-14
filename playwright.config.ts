@@ -21,6 +21,7 @@ export default defineConfig({
     navigationTimeout: process.env.CI ? 60000 : 30000,
     launchOptions: {
       slowMo: process.env.SLOW_MO ? Number(process.env.SLOW_MO) : 0,
+      args: ['--disable-blink-features=AutomationControlled'],
     },
   },
   projects: [
