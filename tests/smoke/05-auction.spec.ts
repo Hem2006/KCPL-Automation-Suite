@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -21,7 +22,12 @@ const openSelect = (page: Page, inputName: string) =>
     .click();
 
 test.describe('Auction - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Auction', [
+      ['post auction', 'Post Auction'],
+      ['live auction', 'Live Auction'],
+      ['sb list', 'Sb List'],
+    ]);
     await sidebar.auctionButton.waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     const postAuctionItem = page.locator(POST_AUCTION);

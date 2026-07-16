@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -57,7 +58,15 @@ async function clickFirstRow(page: Page) {
 }
 
 test.describe('Legal - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page }) => {
+  test.beforeEach(async ({ authenticatedPage: page }, testInfo) => {
+    await tagAllure(testInfo, 'Legal', [
+      ['dashboard', 'Dashboard'],
+      ['legal prospect report', 'Legal Prospect Report'],
+      ['sf case wise report', 'SF Case Wise Report'],
+      ['sf subscriber wise report', 'SF Subscriber Wise Report'],
+      ['subscriber information', 'Subscriber Information'],
+      ['favorite', 'Favorite'],
+    ]);
     await ensureLegalOpen(page);
   });
 

@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -9,7 +10,8 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Receipt - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Receipt', [['', 'Receipt']]);
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     await sidebar.receiptLink.click();
     await page.getByTestId('receipt-generation-lable').waitFor({ state: 'visible', timeout: 15000 });

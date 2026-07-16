@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -9,7 +10,12 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Payment voucher - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Payment Voucher', [
+      ['sb & asb', 'Sb & Asb'],
+      ['repayment', 'Repayment'],
+      ['other payment', 'Other'],
+    ]);
     await sidebar.paymentVoucherButton.waitFor({ state: 'visible', timeout: 15000 });
     await noBackdrop(page);
     const isOpen = await page.getByText('Sb & Asb', { exact: true }).isVisible().catch(() => false);

@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -9,7 +10,12 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Paid voucher List - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Paid Voucher List', [
+      ['sb & asb paid list', 'Sb & Asb Paid List'],
+      ['repayment paid list', 'Repayment Paid List'],
+      ['other paid list', 'Other Paid List'],
+    ]);
     // If the Payment voucher submenu is still open from a prior spec, close it — it pushes
     // "Paid voucher List" below the sidebar fold and makes it non-visible.
     const paymentSubmenuOpen = await page.getByText('Sb & Asb', { exact: true }).isVisible().catch(() => false);

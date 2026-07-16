@@ -2,6 +2,7 @@ import path from 'path';
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
 import { SchemeFormPage } from '../pages/scheme-form.page';
+import { tagAllure } from '../helpers/allure-tags';
 
 const TEST_ICON = path.join(__dirname, '../fixtures/assets/test-icon.png');
 
@@ -16,7 +17,12 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Creation - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Creation', [
+      ['scheme', 'Scheme'],
+      ['group', 'Group'],
+      ['generate payable', 'Generate Payable'],
+    ]);
     await sidebar.creationButton.waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     // With a shared page, clicking Creation when the submenu is already open closes it.

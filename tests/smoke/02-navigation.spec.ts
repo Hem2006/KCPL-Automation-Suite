@@ -1,6 +1,11 @@
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 test.describe('Sidebar Navigation - Smoke @smoke', () => {
+  test.beforeEach(async ({}, testInfo) => {
+    await tagAllure(testInfo, 'Sidebar Navigation', [['', 'Navigation']]);
+  });
+
   test('all sidebar nav items are visible', async ({ sidebar }) => {
     for (const item of sidebar.allNavItems()) {
       await expect(item).toBeVisible();

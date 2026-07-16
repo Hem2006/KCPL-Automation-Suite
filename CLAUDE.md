@@ -54,6 +54,7 @@ test file → auth.fixture.ts (auto-login) → page object (locators) → assert
 - SPA with `#/` hash routing. `baseURL` is `https://dev.mykcpl.com`; `goto('/admin/index.html')` is the correct entry point
 - MUI React — a loading `MuiBackdrop-root` overlay appears after login and between navigations; always wait for it with `.waitFor({ state: 'hidden' }).catch(() => {})` before clicking sidebar items
 - Sidebar: `Dashboard` and `Receipt` are real `<a>` elements → use `getByRole('link')`; all other top-level items are `<div role="button">` → use `getByRole('button')`
+- Full sidebar order: Dashboard, Receipt, Creation, Auction, Guarantor details, Payment voucher, Paid voucher List, Collection, Report, Favorite, **Accounts Operation**, HR, Audit, Legal. The last four sit below the fold in the CI viewport (1600x900) and need `scrollIntoViewIfNeeded()` before clicking (see spec files 11-16 and [MUI Interaction Gotchas] in memory)
 - Submenu items are plain text elements (not buttons) → use `getByText(name, { exact: true })`
 - App has intentional typos that must be matched exactly: `"Aprove guarantor"`, `"Group Bussiness"`, `"directReciept"` (in the URL)
 
@@ -130,6 +131,12 @@ Specs run in numeric order (01 → 10). All are tagged `@smoke`.
 | `08-paid-voucher.spec.ts` | Paid voucher List | Sb & Asb Paid List, Repayment Paid List, Other Paid List | 12 |
 | `09-collection.spec.ts` | Collection | Due list, Unsettle Report, Settle Report, Agent Transfer | 4 |
 | `10-report.spec.ts` | Report | Enrollment, Request Information, Group Bussiness, Agreement, Member List, Website Enquiry, Processing List | 7 |
+| `11-accounts-creation.spec.ts` | Accounts Operation → Creation | Add vendor, Group & Ledger creation | ~15 |
+| `12-accounts-transaction.spec.ts` | Accounts Operation → Transaction | Add FD, vouchers | ~13 |
+| `13-accounts-report.spec.ts` | Accounts Operation → Report | Cash in hand, Petty cash | ~4 |
+| `14-hr.spec.ts` | HR | Employee Creation | ~6 |
+| `15-audit.spec.ts` | Audit | Scheme | ~2 |
+| `16-legal.spec.ts` | Legal | Dashboard, Legal Prospect Report, SF Case Wise Report, SF Subscriber Wise Report, Subscriber Information, Favorite | 15 |
 
 ## Report sub-pages (all under the Report sidebar section)
 

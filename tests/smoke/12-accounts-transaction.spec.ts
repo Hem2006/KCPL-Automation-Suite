@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -53,7 +54,8 @@ async function ensureAccountsTransactionOpen(page: Page) {
 }
 
 test.describe('Accounts - Transaction - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page }) => {
+  test.beforeEach(async ({ authenticatedPage: page }, testInfo) => {
+    await tagAllure(testInfo, 'Accounts Operation', [['', 'Transaction']]);
     await ensureAccountsTransactionOpen(page);
   });
 
@@ -507,7 +509,8 @@ async function expectVoucherSuccess(page: Page) {
 }
 
 test.describe('@smoke Accounts - Transaction - form submissions', () => {
-  test.beforeEach(async ({ authenticatedPage: page }) => {
+  test.beforeEach(async ({ authenticatedPage: page }, testInfo) => {
+    await tagAllure(testInfo, 'Accounts Operation', [['', 'Transaction']]);
     // Extend here so the hook itself gets the long budget too
     test.setTimeout(180000);
     await ensureAccountsTransactionOpen(page);

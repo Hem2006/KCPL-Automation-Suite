@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -9,7 +10,16 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Report - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Report', [
+      ['enrollment', 'Enrollment'],
+      ['request information', 'Request Information'],
+      ['group bussiness', 'Group Bussiness'],
+      ['agreement', 'Agreement'],
+      ['member list', 'Member List'],
+      ['website enquiry', 'Website Enquiry'],
+      ['processing list', 'Processing List'],
+    ]);
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
     await sidebar.reportButton.waitFor({ state: 'visible', timeout: 25000 });
     await sidebar.reportButton.click({ timeout: 20000 });

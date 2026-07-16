@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -9,7 +10,13 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 }, { timeout: 30000 });
 
 test.describe('Collection - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Collection', [
+      ['due list', 'Due List'],
+      ['unsettle report', 'Unsettle Report'],
+      ['settle report', 'Settle Report'],
+      ['agent transfer', 'Agent Transfer'],
+    ]);
     await sidebar.collectionButton.waitFor({ state: 'visible', timeout: 15000 });
     await noBackdrop(page);
     const isOpen = await page.getByText('Due list', { exact: true }).isVisible().catch(() => false);

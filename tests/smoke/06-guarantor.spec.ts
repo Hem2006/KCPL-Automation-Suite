@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -12,7 +13,12 @@ const openDropdown = (page: Page, label: string) =>
   page.locator('.MuiFormControl-root').filter({ hasText: label }).locator('.MuiSelect-select').click();
 
 test.describe('Guarantor details - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page, sidebar }) => {
+  test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
+    await tagAllure(testInfo, 'Guarantor Details', [
+      ['add guarantor', 'Add Guarantor'],
+      ['aprove guarantor', 'Aprove Guarantor'],
+      ['secondary approval', 'Secondary Approval'],
+    ]);
     await sidebar.guarantorButton.waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     const isOpen = await page.getByText('Add guarantor', { exact: true }).isVisible().catch(() => false);

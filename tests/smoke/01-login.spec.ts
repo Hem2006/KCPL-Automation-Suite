@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
+import { tagAllure } from '../helpers/allure-tags';
 
 test.describe('Login - Smoke @smoke', () => {
   let loginPage: LoginPage;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    await tagAllure(testInfo, 'Login', [['', 'Login']]);
     loginPage = new LoginPage(page);
     await loginPage.goto();
   });

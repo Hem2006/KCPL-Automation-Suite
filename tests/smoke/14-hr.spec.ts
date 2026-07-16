@@ -1,5 +1,6 @@
 import { type Page } from '@playwright/test';
 import { test, expect } from '../fixtures/auth.fixture';
+import { tagAllure } from '../helpers/allure-tags';
 
 const noBackdrop = (page: Page) => page.waitForFunction(() => {
   const el = document.querySelector('.MuiBackdrop-root');
@@ -85,7 +86,17 @@ async function ensureEmployeeOpen(page: Page) {
 }
 
 test.describe('HR - Smoke @smoke', () => {
-  test.beforeEach(async ({ authenticatedPage: page }) => {
+  test.beforeEach(async ({ authenticatedPage: page }, testInfo) => {
+    await tagAllure(testInfo, 'HR', [
+      ['employee creation', 'Employee Creation'],
+      ['advisor list', 'Advisor List'],
+      ['incentive', 'Incentive'],
+      ['holiday', 'Holiday'],
+      ['designation', 'Designation'],
+      ['dynamic assign value', 'Dynamic Assign Value'],
+      ['report', 'Report'],
+      ['favorite', 'Favorite'],
+    ]);
     await ensureHROpen(page);
   });
 
