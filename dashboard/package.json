@@ -1,0 +1,15 @@
+{
+  "name": "kcpl-test-dashboard",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0",
+    "@types/bcryptjs": "^2.4.6"
+  }
+}
