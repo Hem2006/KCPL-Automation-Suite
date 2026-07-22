@@ -11,26 +11,12 @@ on:
     inputs:
       spec_file:
         description: 'Spec file to run (or "all" for full suite)'
-        type: choice
+        type: string
         default: 'all'
-        options:
-          - all
-          - 01-login.spec.ts
-          - 02-navigation.spec.ts
-          - 03-creation.spec.ts
-          - 04-receipt.spec.ts
-          - 05-auction.spec.ts
-          - 06-guarantor.spec.ts
-          - 07-payment-voucher.spec.ts
-          - 08-paid-voucher.spec.ts
-          - 09-collection.spec.ts
-          - 10-report.spec.ts
-          - 11-accounts-creation.spec.ts
-          - 12-accounts-transaction.spec.ts
-          - 13-accounts-report.spec.ts
-          - 14-hr.spec.ts
-          - 15-audit.spec.ts
-          - 16-legal.spec.ts
+      test_grep:
+        description: 'Grep pattern for a specific test name (optional)'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -79,7 +65,10 @@ jobs:
           CI: true
         run: |
           SPEC="${{ github.event.inputs.spec_file }}"
-          if [ "$SPEC" = "all" ] || [ -z "$SPEC" ]; then
+          GREP="${{ github.event.inputs.test_grep }}"
+          if [ -n "$GREP" ] && [ -n "$SPEC" ] && [ "$SPEC" != "all" ]; then
+            npx playwright test "tests/smoke/$SPEC" --grep "$GREP"
+          elif [ "$SPEC" = "all" ] || [ -z "$SPEC" ]; then
             npx playwright test --grep @smoke
           else
             npx playwright test "tests/smoke/$SPEC"

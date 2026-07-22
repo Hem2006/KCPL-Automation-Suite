@@ -36,12 +36,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Server misconfigured — no GITHUB_PAT' });
   }
 
-  const { specFile } = req.body ?? {};
+  const { specFile, testGrep } = req.body ?? {};
   if (!specFile || !VALID_SPECS.includes(specFile)) {
     return res.status(400).json({ error: 'Invalid spec file', valid: VALID_SPECS });
   }
 
   const triggeredAt = Date.now();
+
+  const inputs: Record<string, string> = { spec_file: specFile };
+  if (testGrep && typeof testGrep === 'string' && testGrep.trim()) {
+    inputs.test_grep = testGrep.trim();
+  }
 
   const ghRes = await fetch(
     'https://api.github.com/repos/Hem2006/KCPL-Automation-Suite/actions/workflows/test.yml/dispatches',
@@ -54,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
       body: JSON.stringify({
         ref: 'main',
-        inputs: { spec_file: specFile },
+        inputs,
       }),
     }
   );

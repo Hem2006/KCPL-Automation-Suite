@@ -30,13 +30,14 @@
     color: var(--text);
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 48px;
   }
 
   .container {
     width: 100%;
-    max-width: 520px;
+    max-width: 580px;
     padding: 24px;
   }
 
@@ -71,8 +72,7 @@
   }
 
   input[type="text"],
-  input[type="password"],
-  select {
+  input[type="password"] {
     width: 100%;
     padding: 10px 12px;
     background: var(--bg);
@@ -86,12 +86,9 @@
   }
 
   input[type="text"]:focus,
-  input[type="password"]:focus,
-  select:focus {
+  input[type="password"]:focus {
     border-color: var(--accent);
   }
-
-  select option { background: var(--surface); }
 
   button {
     width: 100%;
@@ -122,6 +119,140 @@
     margin-top: 8px;
     display: none;
   }
+
+  /* Test picker */
+  .test-picker {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .spec-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row:hover { background: var(--surface-hover); }
+  .spec-row.selected { background: rgba(59,130,246,0.12); }
+
+  .spec-arrow {
+    width: 20px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .spec-arrow.open { transform: rotate(90deg); }
+
+  .spec-name {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .spec-count {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    margin-left: 8px;
+  }
+
+  .spec-run-btn {
+    width: auto;
+    padding: 4px 12px;
+    margin: 0 0 0 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    background: var(--accent);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .spec-row:hover .spec-run-btn,
+  .spec-row.selected .spec-run-btn { opacity: 1; }
+  .spec-run-btn:hover { background: var(--accent-hover); }
+
+  .test-list {
+    display: none;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .test-list.open { display: block; }
+
+  .test-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px 8px 40px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-top: 1px solid rgba(51,65,85,0.5);
+    font-size: 0.83rem;
+    color: var(--text-dim);
+  }
+  .test-item:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  .test-item.selected {
+    background: rgba(59,130,246,0.12);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .test-item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .test-item.selected .test-item-dot { background: var(--accent); }
+
+  .test-item-name { flex: 1; }
+
+  .test-loading {
+    padding: 12px 40px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(51,65,85,0.5);
+  }
+  .test-loading .spinner { margin-right: 6px; }
+
+  .all-tests-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+  .all-tests-row:hover { background: var(--surface-hover); }
+  .all-tests-row.selected { background: rgba(59,130,246,0.12); }
+  .all-tests-row .spec-name { font-weight: 600; }
+
+  /* Selection info bar */
+  .selection-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    font-size: 0.83rem;
+    min-height: 38px;
+  }
+  .selection-label { color: var(--text-dim); }
+  .selection-value { color: var(--accent); font-weight: 600; }
 
   /* Status panel */
   .status-panel { display: none; }
@@ -208,26 +339,12 @@
 
   <!-- Trigger (hidden until logged in) -->
   <div id="trigger-section" class="card hidden">
-    <label for="spec-select">Test to run</label>
-    <select id="spec-select">
-      <option value="all">All tests (full suite)</option>
-      <option value="01-login.spec.ts">01 - Login</option>
-      <option value="02-navigation.spec.ts">02 - Navigation</option>
-      <option value="03-creation.spec.ts">03 - Creation</option>
-      <option value="04-receipt.spec.ts">04 - Receipt</option>
-      <option value="05-auction.spec.ts">05 - Auction</option>
-      <option value="06-guarantor.spec.ts">06 - Guarantor details</option>
-      <option value="07-payment-voucher.spec.ts">07 - Payment voucher</option>
-      <option value="08-paid-voucher.spec.ts">08 - Paid voucher List</option>
-      <option value="09-collection.spec.ts">09 - Collection</option>
-      <option value="10-report.spec.ts">10 - Report</option>
-      <option value="11-accounts-creation.spec.ts">11 - Accounts Creation</option>
-      <option value="12-accounts-transaction.spec.ts">12 - Accounts Transaction</option>
-      <option value="13-accounts-report.spec.ts">13 - Accounts Report</option>
-      <option value="14-hr.spec.ts">14 - HR</option>
-      <option value="15-audit.spec.ts">15 - Audit</option>
-      <option value="16-legal.spec.ts">16 - Legal</option>
-    </select>
+    <label>Select test to run</label>
+    <div class="test-picker" id="test-picker"></div>
+    <div class="selection-bar">
+      <span class="selection-label">Selected:</span>
+      <span class="selection-value" id="selection-display">All tests (full suite)</span>
+    </div>
     <button class="btn-primary" id="trigger-btn">Run tests</button>
     <div id="trigger-error" class="error-msg"></div>
   </div>
@@ -258,6 +375,25 @@
 (function () {
   const $ = (s) => document.querySelector(s);
 
+  const SPECS = [
+    { file: '01-login.spec.ts',                label: '01 - Login' },
+    { file: '02-navigation.spec.ts',            label: '02 - Navigation' },
+    { file: '03-creation.spec.ts',              label: '03 - Creation' },
+    { file: '04-receipt.spec.ts',               label: '04 - Receipt' },
+    { file: '05-auction.spec.ts',               label: '05 - Auction' },
+    { file: '06-guarantor.spec.ts',             label: '06 - Guarantor details' },
+    { file: '07-payment-voucher.spec.ts',       label: '07 - Payment voucher' },
+    { file: '08-paid-voucher.spec.ts',          label: '08 - Paid voucher List' },
+    { file: '09-collection.spec.ts',            label: '09 - Collection' },
+    { file: '10-report.spec.ts',                label: '10 - Report' },
+    { file: '11-accounts-creation.spec.ts',     label: '11 - Accounts Creation' },
+    { file: '12-accounts-transaction.spec.ts',  label: '12 - Accounts Transaction' },
+    { file: '13-accounts-report.spec.ts',       label: '13 - Accounts Report' },
+    { file: '14-hr.spec.ts',                    label: '14 - HR' },
+    { file: '15-audit.spec.ts',                 label: '15 - Audit' },
+    { file: '16-legal.spec.ts',                 label: '16 - Legal' },
+  ];
+
   const loginSection   = $('#login-section');
   const triggerSection  = $('#trigger-section');
   const statusSection   = $('#status-section');
@@ -267,11 +403,14 @@
   const passwordInput   = $('#password');
   const triggerBtn      = $('#trigger-btn');
   const triggerError    = $('#trigger-error');
-  const specSelect      = $('#spec-select');
+  const picker          = $('#test-picker');
+  const selDisplay      = $('#selection-display');
 
   let pollTimer = null;
+  let selection = { specFile: 'all', testGrep: '', label: 'All tests (full suite)' };
+  const testCache = {};
 
-  // Login
+  // --- Login ---
   async function login() {
     loginBtn.disabled = true;
     loginError.style.display = 'none';
@@ -300,9 +439,9 @@
   function showTrigger() {
     loginSection.classList.add('hidden');
     triggerSection.classList.remove('hidden');
+    buildPicker();
   }
 
-  // Check if already logged in (cookie still valid)
   async function checkSession() {
     try {
       const res = await fetch('/api/status?triggeredAt=0');
@@ -311,17 +450,141 @@
   }
   checkSession();
 
-  // Trigger
+  // --- Test Picker ---
+  function buildPicker() {
+    picker.innerHTML = '';
+
+    // "All tests" row
+    const allRow = document.createElement('div');
+    allRow.className = 'all-tests-row selected';
+    allRow.innerHTML = '<span class="spec-name">All tests (full suite)</span>';
+    allRow.addEventListener('click', () => {
+      clearSelections();
+      allRow.classList.add('selected');
+      selection = { specFile: 'all', testGrep: '', label: 'All tests (full suite)' };
+      selDisplay.textContent = selection.label;
+    });
+    picker.appendChild(allRow);
+
+    SPECS.forEach((spec) => {
+      const wrapper = document.createElement('div');
+
+      // Spec row
+      const row = document.createElement('div');
+      row.className = 'spec-row';
+      row.innerHTML = `
+        <span class="spec-arrow">&#9654;</span>
+        <span class="spec-name">${spec.label}</span>
+        <span class="spec-count"></span>
+        <button class="spec-run-btn" title="Run entire file">Run all</button>
+      `;
+
+      const arrow = row.querySelector('.spec-arrow');
+      const countEl = row.querySelector('.spec-count');
+      const runBtn = row.querySelector('.spec-run-btn');
+
+      // Test list container
+      const testList = document.createElement('div');
+      testList.className = 'test-list';
+
+      // Click the row to expand/collapse
+      row.addEventListener('click', (e) => {
+        if (e.target === runBtn) return;
+        const isOpen = testList.classList.contains('open');
+        if (isOpen) {
+          testList.classList.remove('open');
+          arrow.classList.remove('open');
+        } else {
+          testList.classList.add('open');
+          arrow.classList.add('open');
+          loadTests(spec.file, testList, countEl);
+        }
+      });
+
+      // "Run all" button selects the whole file
+      runBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearSelections();
+        row.classList.add('selected');
+        selection = { specFile: spec.file, testGrep: '', label: spec.label };
+        selDisplay.textContent = selection.label;
+      });
+
+      wrapper.appendChild(row);
+      wrapper.appendChild(testList);
+      picker.appendChild(wrapper);
+    });
+  }
+
+  function clearSelections() {
+    picker.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+  }
+
+  async function loadTests(file, container, countEl) {
+    if (testCache[file]) {
+      renderTests(file, testCache[file], container, countEl);
+      return;
+    }
+
+    container.innerHTML = '<div class="test-loading"><span class="spinner"></span>Loading tests...</div>';
+
+    try {
+      const res = await fetch(`/api/tests?file=${encodeURIComponent(file)}`);
+      if (!res.ok) {
+        container.innerHTML = '<div class="test-loading">Failed to load tests</div>';
+        return;
+      }
+      const data = await res.json();
+      const tests = data[file] || [];
+      testCache[file] = tests;
+      renderTests(file, tests, container, countEl);
+    } catch {
+      container.innerHTML = '<div class="test-loading">Failed to load tests</div>';
+    }
+  }
+
+  function renderTests(file, tests, container, countEl) {
+    countEl.textContent = tests.length + ' tests';
+    container.innerHTML = '';
+
+    if (tests.length === 0) {
+      container.innerHTML = '<div class="test-loading">No tests found</div>';
+      return;
+    }
+
+    tests.forEach((name) => {
+      const item = document.createElement('div');
+      item.className = 'test-item';
+      item.innerHTML = `<span class="test-item-dot"></span><span class="test-item-name">${escapeHtml(name)}</span>`;
+
+      item.addEventListener('click', () => {
+        clearSelections();
+        item.classList.add('selected');
+        const specLabel = SPECS.find(s => s.file === file)?.label || file;
+        selection = { specFile: file, testGrep: name, label: specLabel + ' > ' + name };
+        selDisplay.textContent = selection.label;
+      });
+
+      container.appendChild(item);
+    });
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  // --- Trigger ---
   async function trigger() {
     triggerBtn.disabled = true;
     triggerError.style.display = 'none';
-    const specFile = specSelect.value;
 
     try {
       const res = await fetch('/api/trigger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ specFile }),
+        body: JSON.stringify({ specFile: selection.specFile, testGrep: selection.testGrep }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -331,9 +594,7 @@
         return;
       }
 
-      // Show status panel
-      const label = specSelect.options[specSelect.selectedIndex].text;
-      $('#st-spec').textContent = label;
+      $('#st-spec').textContent = selection.label;
       setBadge('waiting');
       $('#st-run-row').style.display = 'none';
       $('#st-links').style.display = 'none';
@@ -349,6 +610,7 @@
 
   triggerBtn.addEventListener('click', trigger);
 
+  // --- Status polling ---
   function setBadge(status) {
     const map = {
       waiting: 'badge-waiting',
