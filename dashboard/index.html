@@ -445,10 +445,35 @@
   async function checkSession() {
     try {
       const res = await fetch('/api/status?triggeredAt=0');
-      if (res.status !== 401) showTrigger();
+      if (res.status !== 401) {
+        showTrigger();
+        resumeActiveRun();
+      }
     } catch {}
   }
   checkSession();
+
+  function resumeActiveRun() {
+    const saved = localStorage.getItem('kcpl_active_run');
+    if (!saved) return;
+    try {
+      const run = JSON.parse(saved);
+      if (!run.triggeredAt) return;
+      // Discard runs older than 1 hour
+      if (Date.now() - run.triggeredAt > 3600000) {
+        localStorage.removeItem('kcpl_active_run');
+        return;
+      }
+      $('#st-spec').textContent = run.label || '—';
+      setBadge('waiting');
+      $('#st-run-row').style.display = 'none';
+      $('#st-links').style.display = 'none';
+      statusSection.style.display = 'block';
+      startPolling(run.triggeredAt);
+    } catch {
+      localStorage.removeItem('kcpl_active_run');
+    }
+  }
 
   // --- Test Picker ---
   function buildPicker() {
@@ -600,6 +625,11 @@
       $('#st-links').style.display = 'none';
       statusSection.style.display = 'block';
 
+      localStorage.setItem('kcpl_active_run', JSON.stringify({
+        triggeredAt: data.triggeredAt,
+        label: selection.label,
+      }));
+
       startPolling(data.triggeredAt);
     } catch {
       triggerError.textContent = 'Network error';
@@ -657,6 +687,7 @@
         if (data.status === 'completed') {
           clearInterval(pollTimer);
           pollTimer = null;
+          localStorage.removeItem('kcpl_active_run');
         }
       } catch {}
     };
