@@ -8,20 +8,30 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface-hover: #334155;
-    --border: #334155;
-    --text: #e2e8f0;
-    --text-dim: #94a3b8;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --green: #22c55e;
-    --red: #ef4444;
-    --yellow: #eab308;
-    --radius: 8px;
-    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface-hover: #f8f9fa;
+    --border: #e2e8f0;
+    --text: #1a202c;
+    --text-dim: #718096;
+    --accent: #0d9488;
+    --accent-hover: #0f766e;
+    --accent-light: #ccfbf1;
+    --accent-light2: rgba(13,148,136,0.08);
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --yellow: #ca8a04;
+    --yellow-bg: #fef9c3;
+    --blue: #2563eb;
+    --blue-bg: #dbeafe;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
   }
 
   body {
@@ -29,28 +39,43 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 48px;
   }
 
-  .container {
-    width: 100%;
-    max-width: 580px;
-    padding: 24px;
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    margin-bottom: 32px;
   }
 
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 4px;
+  .header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
   }
 
-  .subtitle {
+  .header .subtitle {
     color: var(--text-dim);
     font-size: 0.875rem;
-    margin-bottom: 32px;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .main.login-view {
+    grid-template-columns: 1fr;
+    max-width: 440px;
   }
 
   .card {
@@ -58,56 +83,87 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
-    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card-title-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    line-height: 1.5;
   }
 
   label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   input[type="text"],
   input[type="password"] {
     width: 100%;
-    padding: 10px 12px;
-    background: var(--bg);
+    padding: 10px 14px;
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     color: var(--text);
     font-family: var(--font);
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
   input[type="text"]:focus,
   input[type="password"]:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
   }
 
   button {
     width: 100%;
     padding: 10px 16px;
     border: none;
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     font-family: var(--font);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, box-shadow 0.15s;
     margin-top: 16px;
   }
 
   .btn-primary {
     background: var(--accent);
     color: #fff;
+    box-shadow: 0 1px 2px rgba(13,148,136,0.2);
   }
-  .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+    box-shadow: 0 2px 4px rgba(13,148,136,0.25);
+  }
   .btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -115,7 +171,7 @@
 
   .error-msg {
     color: var(--red);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     margin-top: 8px;
     display: none;
   }
@@ -123,16 +179,20 @@
   /* Test picker */
   .test-picker {
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    max-height: 420px;
+    max-height: 460px;
     overflow-y: auto;
   }
+
+  .test-picker::-webkit-scrollbar { width: 6px; }
+  .test-picker::-webkit-scrollbar-track { background: transparent; }
+  .test-picker::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .spec-row {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 11px 14px;
     cursor: pointer;
     transition: background 0.1s;
     border-bottom: 1px solid var(--border);
@@ -140,11 +200,11 @@
   }
   .spec-row:last-child { border-bottom: none; }
   .spec-row:hover { background: var(--surface-hover); }
-  .spec-row.selected { background: rgba(59,130,246,0.12); }
+  .spec-row.selected { background: var(--accent-light2); }
 
   .spec-arrow {
     width: 20px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-dim);
     flex-shrink: 0;
     transition: transform 0.15s;
@@ -153,23 +213,27 @@
 
   .spec-name {
     flex: 1;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
+    color: var(--text);
   }
 
   .spec-count {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-dim);
     font-family: var(--mono);
     margin-left: 8px;
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 10px;
   }
 
   .spec-run-btn {
     width: auto;
     padding: 4px 12px;
     margin: 0 0 0 8px;
-    font-size: 0.75rem;
-    border-radius: 4px;
+    font-size: 0.72rem;
+    border-radius: 6px;
     background: var(--accent);
     color: #fff;
     opacity: 0;
@@ -189,19 +253,19 @@
   .test-item {
     display: flex;
     align-items: center;
-    padding: 8px 12px 8px 40px;
+    padding: 9px 14px 9px 42px;
     cursor: pointer;
     transition: background 0.1s;
-    border-top: 1px solid rgba(51,65,85,0.5);
-    font-size: 0.83rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.82rem;
     color: var(--text-dim);
   }
   .test-item:hover {
-    background: var(--surface-hover);
+    background: var(--surface);
     color: var(--text);
   }
   .test-item.selected {
-    background: rgba(59,130,246,0.12);
+    background: var(--accent-light);
     color: var(--accent);
     font-weight: 600;
   }
@@ -210,33 +274,33 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--text-dim);
+    background: var(--border);
     margin-right: 10px;
     flex-shrink: 0;
   }
+  .test-item:hover .test-item-dot { background: var(--text-dim); }
   .test-item.selected .test-item-dot { background: var(--accent); }
 
   .test-item-name { flex: 1; }
 
   .test-loading {
-    padding: 12px 40px;
+    padding: 12px 42px;
     font-size: 0.8rem;
     color: var(--text-dim);
-    border-top: 1px solid rgba(51,65,85,0.5);
+    border-top: 1px solid var(--border);
   }
-  .test-loading .spinner { margin-right: 6px; }
 
   .all-tests-row {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 11px 14px;
     cursor: pointer;
     transition: background 0.1s;
     border-bottom: 1px solid var(--border);
     user-select: none;
   }
   .all-tests-row:hover { background: var(--surface-hover); }
-  .all-tests-row.selected { background: rgba(59,130,246,0.12); }
+  .all-tests-row.selected { background: var(--accent-light2); }
   .all-tests-row .spec-name { font-weight: 600; }
 
   /* Selection info bar */
@@ -244,14 +308,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 12px;
-    padding: 8px 12px;
+    margin-top: 14px;
+    padding: 10px 14px;
     background: var(--bg);
-    border-radius: var(--radius);
-    font-size: 0.83rem;
-    min-height: 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    min-height: 40px;
   }
-  .selection-label { color: var(--text-dim); }
+  .selection-label { color: var(--text-dim); font-weight: 500; }
   .selection-value { color: var(--accent); font-weight: 600; }
 
   /* Status panel */
@@ -261,44 +326,45 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 10px 0;
   }
   .status-row + .status-row { border-top: 1px solid var(--border); }
 
-  .status-label { color: var(--text-dim); font-size: 0.85rem; }
-  .status-value { font-family: var(--mono); font-size: 0.85rem; font-weight: 600; }
+  .status-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+  .status-value { font-family: var(--mono); font-size: 0.85rem; font-weight: 600; color: var(--text); }
 
   .badge {
     display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .badge-waiting   { background: #1e293b; color: var(--text-dim); border: 1px solid var(--border); }
-  .badge-queued    { background: #422006; color: var(--yellow); }
-  .badge-running   { background: #172554; color: var(--accent); }
-  .badge-completed { background: #052e16; color: var(--green); }
-  .badge-failed    { background: #450a0a; color: var(--red); }
+  .badge-waiting   { background: var(--bg); color: var(--text-dim); border: 1px solid var(--border); }
+  .badge-queued    { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-running   { background: var(--blue-bg); color: var(--blue); }
+  .badge-completed { background: var(--green-bg); color: var(--green); }
+  .badge-failed    { background: var(--red-bg); color: var(--red); }
 
   .links { margin-top: 16px; display: flex; gap: 10px; }
   .links a {
     flex: 1;
     text-align: center;
-    padding: 8px 12px;
-    border-radius: var(--radius);
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
-    transition: background 0.15s;
+    transition: background 0.15s, box-shadow 0.15s;
   }
   .link-gh {
-    background: var(--surface-hover);
+    background: var(--surface);
     color: var(--text);
+    border: 1px solid var(--border);
   }
-  .link-gh:hover { background: #475569; }
+  .link-gh:hover { background: var(--surface-hover); box-shadow: var(--shadow); }
   .link-allure {
     background: var(--accent);
     color: #fff;
@@ -319,16 +385,27 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .hidden { display: none !important; }
+
+  @media (max-width: 640px) {
+    .main { grid-template-columns: 1fr; }
+    .header { padding: 20px 16px; }
+    .main { padding: 0 16px 32px; }
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="header">
   <h1>KCPL Test Dashboard</h1>
   <p class="subtitle">Trigger and monitor Playwright smoke tests</p>
+</div>
+
+<div class="main login-view" id="main-grid">
 
   <!-- Login -->
   <div id="login-section" class="card">
+    <div class="card-title"><span class="card-title-icon">&#128274;</span> Sign In</div>
+    <p class="card-desc">Enter your credentials to access the test dashboard.</p>
     <label for="username">Username</label>
     <input type="text" id="username" placeholder="Enter username" autocomplete="username">
     <label for="password" style="margin-top:14px">Password</label>
@@ -339,7 +416,8 @@
 
   <!-- Trigger (hidden until logged in) -->
   <div id="trigger-section" class="card hidden">
-    <label>Select test to run</label>
+    <div class="card-title"><span class="card-title-icon">&#9654;</span> Run Tests</div>
+    <p class="card-desc">Select a test suite or expand to pick individual test cases.</p>
     <div class="test-picker" id="test-picker"></div>
     <div class="selection-bar">
       <span class="selection-label">Selected:</span>
@@ -351,7 +429,8 @@
 
   <!-- Status (hidden until a run is triggered) -->
   <div id="status-section" class="card status-panel">
-    <label>Run status</label>
+    <div class="card-title"><span class="card-title-icon">&#128202;</span> Run Status</div>
+    <p class="card-desc">Live status updates for the triggered test run.</p>
     <div class="status-row">
       <span class="status-label">Test</span>
       <span class="status-value" id="st-spec">—</span>
@@ -394,7 +473,8 @@
     { file: '16-legal.spec.ts',                 label: '16 - Legal' },
   ];
 
-  const loginSection   = $('#login-section');
+  const mainGrid        = $('#main-grid');
+  const loginSection    = $('#login-section');
   const triggerSection  = $('#trigger-section');
   const statusSection   = $('#status-section');
   const loginBtn        = $('#login-btn');
@@ -438,6 +518,7 @@
 
   function showTrigger() {
     loginSection.classList.add('hidden');
+    mainGrid.classList.remove('login-view');
     triggerSection.classList.remove('hidden');
     buildPicker();
   }
@@ -459,7 +540,6 @@
     try {
       const run = JSON.parse(saved);
       if (!run.triggeredAt) return;
-      // Discard runs older than 1 hour
       if (Date.now() - run.triggeredAt > 3600000) {
         localStorage.removeItem('kcpl_active_run');
         return;
@@ -479,7 +559,6 @@
   function buildPicker() {
     picker.innerHTML = '';
 
-    // "All tests" row
     const allRow = document.createElement('div');
     allRow.className = 'all-tests-row selected';
     allRow.innerHTML = '<span class="spec-name">All tests (full suite)</span>';
@@ -494,7 +573,6 @@
     SPECS.forEach((spec) => {
       const wrapper = document.createElement('div');
 
-      // Spec row
       const row = document.createElement('div');
       row.className = 'spec-row';
       row.innerHTML = `
@@ -508,11 +586,9 @@
       const countEl = row.querySelector('.spec-count');
       const runBtn = row.querySelector('.spec-run-btn');
 
-      // Test list container
       const testList = document.createElement('div');
       testList.className = 'test-list';
 
-      // Click the row to expand/collapse
       row.addEventListener('click', (e) => {
         if (e.target === runBtn) return;
         const isOpen = testList.classList.contains('open');
@@ -526,7 +602,6 @@
         }
       });
 
-      // "Run all" button selects the whole file
       runBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         clearSelections();
