@@ -22,8 +22,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: smoke-tests
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'workflow_dispatch' && format('dispatch-{0}', github.run_id) || 'smoke-tests' }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 
 jobs:
   smoke-tests:
