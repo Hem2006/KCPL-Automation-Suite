@@ -8,30 +8,25 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f0f2f5;
+    --bg: #f4f5f7;
     --surface: #ffffff;
-    --surface-hover: #f8f9fa;
-    --border: #e2e8f0;
-    --text: #1a202c;
-    --text-dim: #718096;
-    --accent: #0d9488;
-    --accent-hover: #0f766e;
-    --accent-light: #ccfbf1;
-    --accent-light2: rgba(13,148,136,0.08);
-    --green: #16a34a;
-    --green-bg: #dcfce7;
-    --red: #dc2626;
-    --red-bg: #fee2e2;
-    --yellow: #ca8a04;
-    --yellow-bg: #fef9c3;
-    --blue: #2563eb;
-    --blue-bg: #dbeafe;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+    --border: #d8dce3;
+    --border-light: #e8ecf1;
+    --text: #212529;
+    --text-mid: #495057;
+    --text-dim: #868e96;
+    --primary: #1971c2;
+    --primary-hover: #1864ab;
+    --primary-bg: #e7f5ff;
+    --green: #2b8a3e;
+    --green-bg: #ebfbee;
+    --red: #c92a2a;
+    --red-bg: #fff5f5;
+    --yellow: #e67700;
+    --yellow-bg: #fff9db;
+    --radius: 4px;
+    --font: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'Cascadia Code', 'Consolas', 'Monaco', monospace;
   }
 
   body {
@@ -39,415 +34,444 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-  }
-
-  /* Header */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 24px 32px;
-    margin-bottom: 32px;
-  }
-
-  .header h1 {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-
-  .header .subtitle {
-    color: var(--text-dim);
-    font-size: 0.875rem;
-    margin-top: 4px;
-    font-weight: 400;
-  }
-
-  .main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 24px 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-
-  .main.login-view {
-    grid-template-columns: 1fr;
-    max-width: 440px;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: var(--shadow);
-  }
-
-  .card-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .card-title-icon {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-  }
-
-  .card-desc {
-    font-size: 0.82rem;
-    color: var(--text-dim);
-    margin-bottom: 20px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
-  label {
-    display: block;
-    font-size: 0.78rem;
+  /* Top bar */
+  .topbar {
+    background: var(--primary);
+    color: #fff;
+    padding: 0 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    letter-spacing: 0.01em;
   }
+  .topbar-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-right: auto;
+  }
+  .topbar-link {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 12px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.1s, border-color 0.1s;
+    font-weight: 500;
+  }
+  .topbar-link:hover, .topbar-link.active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }
+
+  /* Page content */
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 32px;
+  }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .page-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  /* Layout */
+  .columns {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .col-main { flex: 1; min-width: 0; }
+  .col-side { width: 380px; flex-shrink: 0; }
+
+  /* Panel */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+  }
+
+  .panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #fafbfc;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .panel-body {
+    padding: 16px;
+  }
+
+  /* Login */
+  .login-wrap {
+    max-width: 400px;
+    margin: 80px auto 0;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 4px;
+  }
+
+  .field-label + .field-label { margin-top: 12px; }
 
   input[type="text"],
   input[type="password"] {
     width: 100%;
-    padding: 10px 14px;
+    padding: 8px 10px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius);
     color: var(--text);
     font-family: var(--font);
-    font-size: 0.95rem;
+    font-size: 14px;
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s;
   }
 
   input[type="text"]:focus,
   input[type="password"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+    border-color: var(--primary);
   }
 
-  button {
-    width: 100%;
-    padding: 10px 16px;
-    border: none;
-    border-radius: var(--radius-sm);
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
     font-family: var(--font);
-    font-size: 0.95rem;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s;
-    margin-top: 16px;
+    transition: background 0.12s;
+    text-decoration: none;
   }
 
   .btn-primary {
-    background: var(--accent);
+    background: var(--primary);
     color: #fff;
-    box-shadow: 0 1px 2px rgba(13,148,136,0.2);
+    border-color: var(--primary);
   }
-  .btn-primary:hover:not(:disabled) {
-    background: var(--accent-hover);
-    box-shadow: 0 2px 4px rgba(13,148,136,0.25);
+  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-outline {
+    background: var(--surface);
+    color: var(--text-mid);
+    border-color: var(--border);
   }
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  .btn-outline:hover { background: var(--bg); }
+
+  .btn-block { width: 100%; margin-top: 16px; }
 
   .error-msg {
     color: var(--red);
-    font-size: 0.82rem;
-    margin-top: 8px;
+    font-size: 13px;
+    margin-top: 6px;
     display: none;
   }
 
-  /* Test picker */
-  .test-picker {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    max-height: 460px;
+  /* Test list */
+  .test-list-wrap {
+    max-height: 520px;
     overflow-y: auto;
   }
 
-  .test-picker::-webkit-scrollbar { width: 6px; }
-  .test-picker::-webkit-scrollbar-track { background: transparent; }
-  .test-picker::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .test-list-wrap::-webkit-scrollbar { width: 5px; }
+  .test-list-wrap::-webkit-scrollbar-track { background: transparent; }
+  .test-list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   .spec-row {
     display: flex;
     align-items: center;
-    padding: 11px 14px;
+    padding: 9px 16px;
     cursor: pointer;
-    transition: background 0.1s;
-    border-bottom: 1px solid var(--border);
+    transition: background 0.08s;
+    border-bottom: 1px solid var(--border-light);
     user-select: none;
+    font-size: 13px;
   }
   .spec-row:last-child { border-bottom: none; }
-  .spec-row:hover { background: var(--surface-hover); }
-  .spec-row.selected { background: var(--accent-light2); }
+  .spec-row:hover { background: #f8f9fa; }
+  .spec-row.selected { background: var(--primary-bg); }
 
   .spec-arrow {
-    width: 20px;
-    font-size: 0.65rem;
+    width: 18px;
+    font-size: 9px;
     color: var(--text-dim);
     flex-shrink: 0;
-    transition: transform 0.15s;
+    transition: transform 0.12s;
   }
   .spec-arrow.open { transform: rotate(90deg); }
 
   .spec-name {
     flex: 1;
-    font-size: 0.88rem;
     font-weight: 500;
     color: var(--text);
   }
 
   .spec-count {
-    font-size: 0.72rem;
+    font-size: 11px;
     color: var(--text-dim);
     font-family: var(--mono);
     margin-left: 8px;
-    background: var(--bg);
-    padding: 2px 8px;
-    border-radius: 10px;
   }
 
   .spec-run-btn {
-    width: auto;
-    padding: 4px 12px;
-    margin: 0 0 0 8px;
-    font-size: 0.72rem;
-    border-radius: 6px;
-    background: var(--accent);
+    padding: 3px 10px;
+    margin: 0 0 0 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    background: var(--primary);
     color: #fff;
+    border: none;
     opacity: 0;
-    transition: opacity 0.15s;
+    transition: opacity 0.1s;
+    cursor: pointer;
+    width: auto;
   }
-  .spec-row:hover .spec-run-btn,
-  .spec-row.selected .spec-run-btn { opacity: 1; }
-  .spec-run-btn:hover { background: var(--accent-hover); }
+  .spec-row:hover .spec-run-btn { opacity: 1; }
+  .spec-run-btn:hover { background: var(--primary-hover); }
 
-  .test-list {
+  .test-sub {
     display: none;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+    border-bottom: 1px solid var(--border-light);
   }
-  .test-list.open { display: block; }
+  .test-sub.open { display: block; }
 
   .test-item {
     display: flex;
     align-items: center;
-    padding: 9px 14px 9px 42px;
+    padding: 7px 16px 7px 44px;
     cursor: pointer;
-    transition: background 0.1s;
-    border-top: 1px solid var(--border);
-    font-size: 0.82rem;
+    transition: background 0.08s;
+    border-top: 1px solid var(--border-light);
+    font-size: 12px;
     color: var(--text-dim);
   }
   .test-item:hover {
-    background: var(--surface);
+    background: #f1f3f5;
     color: var(--text);
   }
   .test-item.selected {
-    background: var(--accent-light);
-    color: var(--accent);
+    background: var(--primary-bg);
+    color: var(--primary);
     font-weight: 600;
   }
 
   .test-item-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--border);
-    margin-right: 10px;
+    margin-right: 8px;
     flex-shrink: 0;
   }
-  .test-item:hover .test-item-dot { background: var(--text-dim); }
-  .test-item.selected .test-item-dot { background: var(--accent); }
+  .test-item.selected .test-item-dot { background: var(--primary); }
 
   .test-item-name { flex: 1; }
 
   .test-loading {
-    padding: 12px 42px;
-    font-size: 0.8rem;
+    padding: 10px 44px;
+    font-size: 12px;
     color: var(--text-dim);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-light);
   }
 
-  .all-tests-row {
+  .all-row {
     display: flex;
     align-items: center;
-    padding: 11px 14px;
+    padding: 9px 16px;
     cursor: pointer;
-    transition: background 0.1s;
-    border-bottom: 1px solid var(--border);
+    transition: background 0.08s;
+    border-bottom: 1px solid var(--border-light);
     user-select: none;
+    font-size: 13px;
   }
-  .all-tests-row:hover { background: var(--surface-hover); }
-  .all-tests-row.selected { background: var(--accent-light2); }
-  .all-tests-row .spec-name { font-weight: 600; }
+  .all-row:hover { background: #f8f9fa; }
+  .all-row.selected { background: var(--primary-bg); }
+  .all-row .spec-name { font-weight: 700; }
 
-  /* Selection info bar */
-  .selection-bar {
+  /* Selection bar */
+  .sel-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 14px;
-    padding: 10px 14px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 0.82rem;
-    min-height: 40px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    background: #fafbfc;
+    border-radius: 0 0 var(--radius) var(--radius);
   }
-  .selection-label { color: var(--text-dim); font-weight: 500; }
-  .selection-value { color: var(--accent); font-weight: 600; }
+  .sel-label { color: var(--text-dim); }
+  .sel-value { color: var(--primary); font-weight: 600; }
 
-  /* Status panel */
-  .status-panel { display: none; }
+  .trigger-footer {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .trigger-footer .btn { flex: 1; }
 
+  /* Status */
   .status-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 9px 0;
+    font-size: 13px;
   }
-  .status-row + .status-row { border-top: 1px solid var(--border); }
+  .status-row + .status-row { border-top: 1px solid var(--border-light); }
 
-  .status-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
-  .status-value { font-family: var(--mono); font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .status-label { color: var(--text-dim); }
+  .status-value { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); }
 
   .badge {
     display: inline-block;
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-size: 0.72rem;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
   }
-  .badge-waiting   { background: var(--bg); color: var(--text-dim); border: 1px solid var(--border); }
+  .badge-waiting   { background: #f1f3f5; color: var(--text-dim); }
   .badge-queued    { background: var(--yellow-bg); color: var(--yellow); }
-  .badge-running   { background: var(--blue-bg); color: var(--blue); }
+  .badge-running   { background: var(--primary-bg); color: var(--primary); }
   .badge-completed { background: var(--green-bg); color: var(--green); }
   .badge-failed    { background: var(--red-bg); color: var(--red); }
 
-  .links { margin-top: 16px; display: flex; gap: 10px; }
-  .links a {
-    flex: 1;
-    text-align: center;
-    padding: 9px 14px;
-    border-radius: var(--radius-sm);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.15s, box-shadow 0.15s;
+  .action-links {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
   }
-  .link-gh {
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  .link-gh:hover { background: var(--surface-hover); box-shadow: var(--shadow); }
-  .link-allure {
-    background: var(--accent);
-    color: #fff;
-  }
-  .link-allure:hover { background: var(--accent-hover); }
+  .action-links .btn { flex: 1; text-align: center; font-size: 12px; padding: 7px 12px; }
 
   .spinner {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border: 2px solid var(--border);
-    border-top-color: var(--accent);
+    border-top-color: var(--primary);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     vertical-align: middle;
-    margin-right: 6px;
+    margin-right: 5px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .hidden { display: none !important; }
 
-  @media (max-width: 640px) {
-    .main { grid-template-columns: 1fr; }
-    .header { padding: 20px 16px; }
-    .main { padding: 0 16px 32px; }
+  @media (max-width: 768px) {
+    .columns { flex-direction: column; }
+    .col-side { width: 100%; }
+    .topbar { padding: 0 16px; }
+    .page { padding: 16px; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>KCPL Test Dashboard</h1>
-  <p class="subtitle">Trigger and monitor Playwright smoke tests</p>
+<div class="topbar">
+  <span class="topbar-title">KCPL Automation</span>
+  <a class="topbar-link active" href="#">Dashboard</a>
+  <a class="topbar-link" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Reports</a>
+  <a class="topbar-link" href="https://github.com/Hem2006/KCPL-Automation-Suite/actions" target="_blank" rel="noopener">Actions</a>
 </div>
 
-<div class="main login-view" id="main-grid">
+<div class="page">
 
   <!-- Login -->
-  <div id="login-section" class="card">
-    <div class="card-title"><span class="card-title-icon">&#128274;</span> Sign In</div>
-    <p class="card-desc">Enter your credentials to access the test dashboard.</p>
-    <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Enter username" autocomplete="username">
-    <label for="password" style="margin-top:14px">Password</label>
-    <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
-    <div id="login-error" class="error-msg">Invalid credentials. Try again.</div>
-    <button class="btn-primary" id="login-btn">Sign in</button>
+  <div id="login-section" class="login-wrap">
+    <div class="panel">
+      <div class="panel-header">Sign in</div>
+      <div class="panel-body">
+        <label class="field-label" for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" autocomplete="username">
+        <label class="field-label" for="password" style="margin-top:12px">Password</label>
+        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+        <div id="login-error" class="error-msg">Invalid credentials. Try again.</div>
+        <button class="btn btn-primary btn-block" id="login-btn">Sign in</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Trigger (hidden until logged in) -->
-  <div id="trigger-section" class="card hidden">
-    <div class="card-title"><span class="card-title-icon">&#9654;</span> Run Tests</div>
-    <p class="card-desc">Select a test suite or expand to pick individual test cases.</p>
-    <div class="test-picker" id="test-picker"></div>
-    <div class="selection-bar">
-      <span class="selection-label">Selected:</span>
-      <span class="selection-value" id="selection-display">All tests (full suite)</span>
+  <!-- Main content (hidden until logged in) -->
+  <div id="main-content" class="hidden">
+    <div class="page-title">Test Runner</div>
+    <div class="page-desc">Select a test suite or expand to pick individual test cases, then trigger a run.</div>
+
+    <div class="columns">
+      <div class="col-main">
+        <div class="panel">
+          <div class="panel-header">Test suites</div>
+          <div class="test-list-wrap" id="test-picker"></div>
+          <div class="sel-bar">
+            <span class="sel-label">Selected:</span>
+            <span class="sel-value" id="selection-display">All tests (full suite)</span>
+          </div>
+        </div>
+        <div class="trigger-footer">
+          <button class="btn btn-primary" id="trigger-btn">Run selected tests</button>
+        </div>
+        <div id="trigger-error" class="error-msg"></div>
+      </div>
+
+      <div class="col-side">
+        <div id="status-section" class="panel hidden">
+          <div class="panel-header">Run status</div>
+          <div class="panel-body">
+            <div class="status-row">
+              <span class="status-label">Test</span>
+              <span class="status-value" id="st-spec">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Status</span>
+              <span id="st-badge"><span class="badge badge-waiting">waiting</span></span>
+            </div>
+            <div class="status-row" id="st-run-row" style="display:none">
+              <span class="status-label">Run</span>
+              <span class="status-value" id="st-run">#—</span>
+            </div>
+            <div id="st-links" class="action-links" style="display:none">
+              <a id="link-gh" class="btn btn-outline" href="#" target="_blank" rel="noopener">GitHub Actions</a>
+              <a id="link-allure" class="btn btn-primary" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Allure Report</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="btn-primary" id="trigger-btn">Run tests</button>
-    <div id="trigger-error" class="error-msg"></div>
   </div>
 
-  <!-- Status (hidden until a run is triggered) -->
-  <div id="status-section" class="card status-panel">
-    <div class="card-title"><span class="card-title-icon">&#128202;</span> Run Status</div>
-    <p class="card-desc">Live status updates for the triggered test run.</p>
-    <div class="status-row">
-      <span class="status-label">Test</span>
-      <span class="status-value" id="st-spec">—</span>
-    </div>
-    <div class="status-row">
-      <span class="status-label">Status</span>
-      <span id="st-badge"><span class="badge badge-waiting">waiting</span></span>
-    </div>
-    <div class="status-row" id="st-run-row" style="display:none">
-      <span class="status-label">Run</span>
-      <span class="status-value" id="st-run">#—</span>
-    </div>
-    <div id="st-links" class="links" style="display:none">
-      <a id="link-gh" class="link-gh" href="#" target="_blank" rel="noopener">GitHub Actions</a>
-      <a id="link-allure" class="link-allure" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Allure Report</a>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -473,9 +497,8 @@
     { file: '16-legal.spec.ts',                 label: '16 - Legal' },
   ];
 
-  const mainGrid        = $('#main-grid');
   const loginSection    = $('#login-section');
-  const triggerSection  = $('#trigger-section');
+  const mainContent     = $('#main-content');
   const statusSection   = $('#status-section');
   const loginBtn        = $('#login-btn');
   const loginError      = $('#login-error');
@@ -490,7 +513,6 @@
   let selection = { specFile: 'all', testGrep: '', label: 'All tests (full suite)' };
   const testCache = {};
 
-  // --- Login ---
   async function login() {
     loginBtn.disabled = true;
     loginError.style.display = 'none';
@@ -501,7 +523,7 @@
         body: JSON.stringify({ username: usernameInput.value, password: passwordInput.value }),
       });
       if (res.ok) {
-        showTrigger();
+        showMain();
       } else {
         loginError.style.display = 'block';
       }
@@ -516,10 +538,9 @@
   passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
   usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') passwordInput.focus(); });
 
-  function showTrigger() {
+  function showMain() {
     loginSection.classList.add('hidden');
-    mainGrid.classList.remove('login-view');
-    triggerSection.classList.remove('hidden');
+    mainContent.classList.remove('hidden');
     buildPicker();
   }
 
@@ -527,7 +548,7 @@
     try {
       const res = await fetch('/api/status?triggeredAt=0');
       if (res.status !== 401) {
-        showTrigger();
+        showMain();
         resumeActiveRun();
       }
     } catch {}
@@ -548,19 +569,18 @@
       setBadge('waiting');
       $('#st-run-row').style.display = 'none';
       $('#st-links').style.display = 'none';
-      statusSection.style.display = 'block';
+      statusSection.classList.remove('hidden');
       startPolling(run.triggeredAt);
     } catch {
       localStorage.removeItem('kcpl_active_run');
     }
   }
 
-  // --- Test Picker ---
   function buildPicker() {
     picker.innerHTML = '';
 
     const allRow = document.createElement('div');
-    allRow.className = 'all-tests-row selected';
+    allRow.className = 'all-row selected';
     allRow.innerHTML = '<span class="spec-name">All tests (full suite)</span>';
     allRow.addEventListener('click', () => {
       clearSelections();
@@ -579,7 +599,7 @@
         <span class="spec-arrow">&#9654;</span>
         <span class="spec-name">${spec.label}</span>
         <span class="spec-count"></span>
-        <button class="spec-run-btn" title="Run entire file">Run all</button>
+        <button class="spec-run-btn">Run all</button>
       `;
 
       const arrow = row.querySelector('.spec-arrow');
@@ -587,7 +607,7 @@
       const runBtn = row.querySelector('.spec-run-btn');
 
       const testList = document.createElement('div');
-      testList.className = 'test-list';
+      testList.className = 'test-sub';
 
       row.addEventListener('click', (e) => {
         if (e.target === runBtn) return;
@@ -625,38 +645,28 @@
       renderTests(file, testCache[file], container, countEl);
       return;
     }
-
-    container.innerHTML = '<div class="test-loading"><span class="spinner"></span>Loading tests...</div>';
-
+    container.innerHTML = '<div class="test-loading"><span class="spinner"></span>Loading...</div>';
     try {
       const res = await fetch(`/api/tests?file=${encodeURIComponent(file)}`);
-      if (!res.ok) {
-        container.innerHTML = '<div class="test-loading">Failed to load tests</div>';
-        return;
-      }
+      if (!res.ok) { container.innerHTML = '<div class="test-loading">Failed to load</div>'; return; }
       const data = await res.json();
       const tests = data[file] || [];
       testCache[file] = tests;
       renderTests(file, tests, container, countEl);
     } catch {
-      container.innerHTML = '<div class="test-loading">Failed to load tests</div>';
+      container.innerHTML = '<div class="test-loading">Failed to load</div>';
     }
   }
 
   function renderTests(file, tests, container, countEl) {
-    countEl.textContent = tests.length + ' tests';
+    countEl.textContent = tests.length;
     container.innerHTML = '';
-
-    if (tests.length === 0) {
-      container.innerHTML = '<div class="test-loading">No tests found</div>';
-      return;
-    }
+    if (tests.length === 0) { container.innerHTML = '<div class="test-loading">No tests</div>'; return; }
 
     tests.forEach((name) => {
       const item = document.createElement('div');
       item.className = 'test-item';
       item.innerHTML = `<span class="test-item-dot"></span><span class="test-item-name">${escapeHtml(name)}</span>`;
-
       item.addEventListener('click', () => {
         clearSelections();
         item.classList.add('selected');
@@ -664,7 +674,6 @@
         selection = { specFile: file, testGrep: name, label: specLabel + ' > ' + name };
         selDisplay.textContent = selection.label;
       });
-
       container.appendChild(item);
     });
   }
@@ -675,11 +684,9 @@
     return d.innerHTML;
   }
 
-  // --- Trigger ---
   async function trigger() {
     triggerBtn.disabled = true;
     triggerError.style.display = 'none';
-
     try {
       const res = await fetch('/api/trigger', {
         method: 'POST',
@@ -698,7 +705,7 @@
       setBadge('waiting');
       $('#st-run-row').style.display = 'none';
       $('#st-links').style.display = 'none';
-      statusSection.style.display = 'block';
+      statusSection.classList.remove('hidden');
 
       localStorage.setItem('kcpl_active_run', JSON.stringify({
         triggeredAt: data.triggeredAt,
@@ -715,7 +722,6 @@
 
   triggerBtn.addEventListener('click', trigger);
 
-  // --- Status polling ---
   function setBadge(status) {
     const map = {
       waiting: 'badge-waiting',
@@ -733,32 +739,24 @@
 
   function startPolling(triggeredAt) {
     if (pollTimer) clearInterval(pollTimer);
-
     const poll = async () => {
       try {
         const res = await fetch(`/api/status?triggeredAt=${triggeredAt}`);
         if (res.status === 401) { location.reload(); return; }
         const data = await res.json();
-
-        if (!data.found) {
-          setBadge('waiting');
-          return;
-        }
+        if (!data.found) { setBadge('waiting'); return; }
 
         setBadge(data.conclusion === 'failure' ? 'failure' :
-                 data.conclusion === 'success' ? 'completed' :
-                 data.status);
+                 data.conclusion === 'success' ? 'completed' : data.status);
 
         if (data.run_number) {
           $('#st-run-row').style.display = 'flex';
           $('#st-run').textContent = `#${data.run_number}`;
         }
-
         if (data.html_url) {
           $('#st-links').style.display = 'flex';
           $('#link-gh').href = data.html_url;
         }
-
         if (data.status === 'completed') {
           clearInterval(pollTimer);
           pollTimer = null;
@@ -766,7 +764,6 @@
         }
       } catch {}
     };
-
     poll();
     pollTimer = setInterval(poll, 5000);
   }
