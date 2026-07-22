@@ -8,25 +8,26 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f4f5f7;
+    --bg: #f7f8fa;
     --surface: #ffffff;
-    --border: #d8dce3;
-    --border-light: #e8ecf1;
-    --text: #212529;
-    --text-mid: #495057;
-    --text-dim: #868e96;
-    --primary: #1971c2;
-    --primary-hover: #1864ab;
-    --primary-bg: #e7f5ff;
-    --green: #2b8a3e;
-    --green-bg: #ebfbee;
-    --red: #c92a2a;
-    --red-bg: #fff5f5;
-    --yellow: #e67700;
-    --yellow-bg: #fff9db;
-    --radius: 4px;
-    --font: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
-    --mono: 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+    --border: #e5e7eb;
+    --border-light: #f0f1f3;
+    --text: #1f2937;
+    --text-mid: #4b5563;
+    --text-dim: #9ca3af;
+    --primary: #16a34a;
+    --primary-hover: #15803d;
+    --primary-light: #f0fdf4;
+    --primary-border: #bbf7d0;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --yellow: #d97706;
+    --yellow-bg: #fffbeb;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --font: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    --mono: 'Cascadia Code', 'Consolas', monospace;
   }
 
   body {
@@ -34,162 +35,123 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 
-  /* Top bar */
-  .topbar {
-    background: var(--primary);
-    color: #fff;
-    padding: 0 32px;
-    height: 48px;
+  /* Nav */
+  .nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
     display: flex;
     align-items: center;
-    gap: 24px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    height: 56px;
+    gap: 32px;
   }
-  .topbar-title {
-    font-size: 15px;
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    color: var(--primary);
     margin-right: auto;
-  }
-  .topbar-link {
-    color: rgba(255,255,255,0.8);
     text-decoration: none;
-    padding: 12px 0;
-    border-bottom: 2px solid transparent;
-    transition: color 0.1s, border-color 0.1s;
-    font-weight: 500;
   }
-  .topbar-link:hover, .topbar-link.active {
+  .nav-brand-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #fff;
-    border-bottom-color: #fff;
+    font-size: 16px;
+    font-weight: 800;
   }
+  .nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-mid);
+    text-decoration: none;
+    padding: 16px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.1s;
+  }
+  .nav-link:hover { color: var(--text); }
+  .nav-link.active { color: var(--text); border-bottom-color: var(--primary); }
 
-  /* Page content */
+  /* Page */
   .page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 32px;
+    padding: 32px 40px;
   }
 
-  .page-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: var(--text);
-  }
-
-  .page-desc {
-    font-size: 13px;
-    color: var(--text-dim);
+  .page-header {
     margin-bottom: 24px;
   }
-
-  /* Layout */
-  .columns {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-  }
-
-  .col-main { flex: 1; min-width: 0; }
-  .col-side { width: 380px; flex-shrink: 0; }
-
-  /* Panel */
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 20px;
-  }
-
-  .panel-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
+  .page-title {
+    font-size: 22px;
     font-weight: 700;
-    color: var(--text-mid);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    background: #fafbfc;
-    border-radius: var(--radius) var(--radius) 0 0;
+    color: var(--primary);
   }
-
-  .panel-body {
-    padding: 16px;
-  }
-
-  /* Login */
-  .login-wrap {
-    max-width: 400px;
-    margin: 80px auto 0;
-  }
-
-  .field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-mid);
-    margin-bottom: 4px;
-  }
-
-  .field-label + .field-label { margin-top: 12px; }
-
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 8px 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font);
+  .page-desc {
     font-size: 14px;
-    outline: none;
-    transition: border-color 0.15s;
+    color: var(--text-mid);
+    margin-top: 4px;
   }
 
-  input[type="text"]:focus,
-  input[type="password"]:focus {
-    border-color: var(--primary);
+  /* Section header with action */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
   }
 
+  /* Buttons */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 20px;
+    gap: 6px;
+    padding: 9px 20px;
     border: 1px solid transparent;
-    border-radius: var(--radius);
+    border-radius: 6px;
     font-family: var(--font);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.12s;
+    transition: background 0.12s, border-color 0.12s;
     text-decoration: none;
+    white-space: nowrap;
   }
-
   .btn-primary {
     background: var(--primary);
     color: #fff;
-    border-color: var(--primary);
   }
   .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
   .btn-outline {
     background: var(--surface);
     color: var(--text-mid);
     border-color: var(--border);
   }
-  .btn-outline:hover { background: var(--bg); }
-
-  .btn-block { width: 100%; margin-top: 16px; }
+  .btn-outline:hover { background: var(--bg); border-color: #d1d5db; }
+  .btn-danger {
+    background: var(--surface);
+    color: var(--red);
+    border-color: var(--red);
+  }
+  .btn-danger:hover { background: var(--red-bg); }
+  .btn-sm { padding: 5px 14px; font-size: 13px; }
+  .btn-block { width: 100%; }
 
   .error-msg {
     color: var(--red);
@@ -198,110 +160,188 @@
     display: none;
   }
 
-  /* Test list */
-  .test-list-wrap {
-    max-height: 520px;
-    overflow-y: auto;
+  /* Login */
+  .login-wrap {
+    max-width: 420px;
+    margin: 60px auto 0;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px;
+  }
+  .login-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .login-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 4px;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s;
+    margin-bottom: 14px;
+  }
+  input:focus { border-color: var(--primary); }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
   }
 
-  .test-list-wrap::-webkit-scrollbar { width: 5px; }
-  .test-list-wrap::-webkit-scrollbar-track { background: transparent; }
-  .test-list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
 
-  .spec-row {
+  .card-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+
+  /* Test picker - full width list */
+  .suite-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .suite-table-scroll {
+    max-height: 560px;
+    overflow-y: auto;
+  }
+  .suite-table-scroll::-webkit-scrollbar { width: 5px; }
+  .suite-table-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+  .suite-row {
     display: flex;
     align-items: center;
-    padding: 9px 16px;
+    padding: 12px 20px;
     cursor: pointer;
     transition: background 0.08s;
     border-bottom: 1px solid var(--border-light);
     user-select: none;
-    font-size: 13px;
   }
-  .spec-row:last-child { border-bottom: none; }
-  .spec-row:hover { background: #f8f9fa; }
-  .spec-row.selected { background: var(--primary-bg); }
+  .suite-row:last-child { border-bottom: none; }
+  .suite-row:hover { background: #fafbfc; }
+  .suite-row.selected { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
 
-  .spec-arrow {
-    width: 18px;
-    font-size: 9px;
+  .suite-arrow {
+    width: 20px;
+    font-size: 10px;
     color: var(--text-dim);
     flex-shrink: 0;
     transition: transform 0.12s;
   }
-  .spec-arrow.open { transform: rotate(90deg); }
+  .suite-arrow.open { transform: rotate(90deg); color: var(--primary); }
 
-  .spec-name {
+  .suite-name {
     flex: 1;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text);
   }
 
-  .spec-count {
-    font-size: 11px;
+  .suite-badge {
+    font-size: 12px;
     color: var(--text-dim);
+    background: var(--bg);
+    padding: 2px 10px;
+    border-radius: 12px;
     font-family: var(--mono);
     margin-left: 8px;
   }
 
-  .spec-run-btn {
-    padding: 3px 10px;
-    margin: 0 0 0 6px;
-    font-size: 11px;
-    border-radius: 3px;
+  .suite-action {
+    padding: 4px 14px;
+    margin-left: 8px;
+    font-size: 12px;
+    border-radius: 5px;
     background: var(--primary);
     color: #fff;
     border: none;
+    cursor: pointer;
     opacity: 0;
     transition: opacity 0.1s;
-    cursor: pointer;
+    font-weight: 600;
+    font-family: var(--font);
     width: auto;
   }
-  .spec-row:hover .spec-run-btn { opacity: 1; }
-  .spec-run-btn:hover { background: var(--primary-hover); }
+  .suite-row:hover .suite-action { opacity: 1; }
+  .suite-action:hover { background: var(--primary-hover); }
 
-  .test-sub {
+  .suite-sub {
     display: none;
     background: #fafbfc;
     border-bottom: 1px solid var(--border-light);
   }
-  .test-sub.open { display: block; }
+  .suite-sub.open { display: block; }
 
-  .test-item {
+  .suite-test {
     display: flex;
     align-items: center;
-    padding: 7px 16px 7px 44px;
+    padding: 10px 20px 10px 52px;
     cursor: pointer;
     transition: background 0.08s;
     border-top: 1px solid var(--border-light);
-    font-size: 12px;
-    color: var(--text-dim);
+    font-size: 13px;
+    color: var(--text-mid);
   }
-  .test-item:hover {
-    background: #f1f3f5;
-    color: var(--text);
-  }
-  .test-item.selected {
-    background: var(--primary-bg);
+  .suite-test:hover { background: #f3f4f6; color: var(--text); }
+  .suite-test.selected {
+    background: var(--primary-light);
     color: var(--primary);
     font-weight: 600;
+    border-left: 3px solid var(--primary);
+    padding-left: 49px;
   }
 
-  .test-item-dot {
-    width: 5px;
-    height: 5px;
+  .suite-test-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: var(--border);
-    margin-right: 8px;
+    background: #d1d5db;
+    margin-right: 10px;
     flex-shrink: 0;
   }
-  .test-item.selected .test-item-dot { background: var(--primary); }
+  .suite-test.selected .suite-test-dot { background: var(--primary); }
+  .suite-test-name { flex: 1; }
 
-  .test-item-name { flex: 1; }
-
-  .test-loading {
-    padding: 10px 44px;
-    font-size: 12px;
+  .suite-loading {
+    padding: 10px 52px;
+    font-size: 13px;
     color: var(--text-dim);
     border-top: 1px solid var(--border-light);
   }
@@ -309,77 +349,95 @@
   .all-row {
     display: flex;
     align-items: center;
-    padding: 9px 16px;
+    padding: 12px 20px;
     cursor: pointer;
-    transition: background 0.08s;
     border-bottom: 1px solid var(--border-light);
     user-select: none;
-    font-size: 13px;
+    transition: background 0.08s;
   }
-  .all-row:hover { background: #f8f9fa; }
-  .all-row.selected { background: var(--primary-bg); }
-  .all-row .spec-name { font-weight: 700; }
+  .all-row:hover { background: #fafbfc; }
+  .all-row.selected { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
+  .all-row .suite-name { font-weight: 700; }
 
-  /* Selection bar */
-  .sel-bar {
+  /* Selection + trigger bar */
+  .trigger-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
+    gap: 16px;
+    padding: 14px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .trigger-sel {
+    flex: 1;
+    font-size: 14px;
+    min-width: 0;
+  }
+  .trigger-sel-label { color: var(--text-dim); font-size: 13px; }
+  .trigger-sel-value {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Status card */
+  .status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .status-card-header {
+    padding: 14px 20px;
     background: #fafbfc;
-    border-radius: 0 0 var(--radius) var(--radius);
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
   }
-  .sel-label { color: var(--text-dim); }
-  .sel-value { color: var(--primary); font-weight: 600; }
+  .status-card-body { padding: 16px 20px; }
 
-  .trigger-footer {
-    margin-top: 12px;
-    display: flex;
-    gap: 8px;
-  }
-  .trigger-footer .btn { flex: 1; }
-
-  /* Status */
   .status-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 9px 0;
-    font-size: 13px;
+    padding: 10px 0;
+    font-size: 14px;
   }
   .status-row + .status-row { border-top: 1px solid var(--border-light); }
-
   .status-label { color: var(--text-dim); }
-  .status-value { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); }
+  .status-value { font-family: var(--mono); font-weight: 600; color: var(--text); }
 
   .badge {
     display: inline-block;
-    padding: 2px 10px;
-    border-radius: 3px;
-    font-size: 11px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
   }
-  .badge-waiting   { background: #f1f3f5; color: var(--text-dim); }
+  .badge-waiting   { background: #f3f4f6; color: var(--text-dim); }
   .badge-queued    { background: var(--yellow-bg); color: var(--yellow); }
-  .badge-running   { background: var(--primary-bg); color: var(--primary); }
-  .badge-completed { background: var(--green-bg); color: var(--green); }
+  .badge-running   { background: var(--blue-bg); color: var(--blue); }
+  .badge-completed { background: var(--primary-light); color: var(--primary); }
   .badge-failed    { background: var(--red-bg); color: var(--red); }
 
-  .action-links {
-    margin-top: 14px;
+  .status-links {
     display: flex;
     gap: 8px;
+    margin-top: 16px;
   }
-  .action-links .btn { flex: 1; text-align: center; font-size: 12px; padding: 7px 12px; }
+  .status-links .btn { flex: 1; text-align: center; }
 
   .spinner {
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
     border: 2px solid var(--border);
     border-top-color: var(--primary);
     border-radius: 50%;
@@ -392,64 +450,72 @@
   .hidden { display: none !important; }
 
   @media (max-width: 768px) {
-    .columns { flex-direction: column; }
-    .col-side { width: 100%; }
-    .topbar { padding: 0 16px; }
+    .nav { padding: 0 16px; gap: 16px; }
     .page { padding: 16px; }
+    .cards-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <span class="topbar-title">KCPL Automation</span>
-  <a class="topbar-link active" href="#">Dashboard</a>
-  <a class="topbar-link" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Reports</a>
-  <a class="topbar-link" href="https://github.com/Hem2006/KCPL-Automation-Suite/actions" target="_blank" rel="noopener">Actions</a>
-</div>
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <span class="nav-brand-icon">K</span>
+    KCPL Automation
+  </a>
+  <a class="nav-link active" href="#">Dashboard</a>
+  <a class="nav-link" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Reports</a>
+  <a class="nav-link" href="https://github.com/Hem2006/KCPL-Automation-Suite/actions" target="_blank" rel="noopener">Actions</a>
+</nav>
 
 <div class="page">
 
   <!-- Login -->
   <div id="login-section" class="login-wrap">
-    <div class="panel">
-      <div class="panel-header">Sign in</div>
-      <div class="panel-body">
-        <label class="field-label" for="username">Username</label>
-        <input type="text" id="username" placeholder="Enter username" autocomplete="username">
-        <label class="field-label" for="password" style="margin-top:12px">Password</label>
-        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
-        <div id="login-error" class="error-msg">Invalid credentials. Try again.</div>
-        <button class="btn btn-primary btn-block" id="login-btn">Sign in</button>
-      </div>
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <p>Enter your credentials to access the test dashboard.</p>
+      <label class="field-label" for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter username" autocomplete="username">
+      <label class="field-label" for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+      <div id="login-error" class="error-msg">Invalid credentials. Try again.</div>
+      <button class="btn btn-primary btn-block" id="login-btn" style="margin-top:8px">Sign in</button>
     </div>
   </div>
 
-  <!-- Main content (hidden until logged in) -->
+  <!-- Main (hidden until logged in) -->
   <div id="main-content" class="hidden">
-    <div class="page-title">Test Runner</div>
-    <div class="page-desc">Select a test suite or expand to pick individual test cases, then trigger a run.</div>
 
-    <div class="columns">
-      <div class="col-main">
-        <div class="panel">
-          <div class="panel-header">Test suites</div>
-          <div class="test-list-wrap" id="test-picker"></div>
-          <div class="sel-bar">
-            <span class="sel-label">Selected:</span>
-            <span class="sel-value" id="selection-display">All tests (full suite)</span>
-          </div>
+    <div class="page-header">
+      <div class="page-title">Test Runner</div>
+      <div class="page-desc">Manage your Playwright smoke test runs</div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">My Test Suites</div>
+      <button class="btn btn-primary" id="trigger-btn">Run Selected Tests</button>
+    </div>
+    <div id="trigger-error" class="error-msg" style="margin-bottom:12px"></div>
+
+    <!-- Test suites table -->
+    <div class="suite-table">
+      <div class="suite-table-scroll" id="test-picker"></div>
+      <div class="trigger-bar">
+        <div class="trigger-sel">
+          <div class="trigger-sel-label">Selected</div>
+          <div class="trigger-sel-value" id="selection-display">All tests (full suite)</div>
         </div>
-        <div class="trigger-footer">
-          <button class="btn btn-primary" id="trigger-btn">Run selected tests</button>
-        </div>
-        <div id="trigger-error" class="error-msg"></div>
       </div>
+    </div>
 
-      <div class="col-side">
-        <div id="status-section" class="panel hidden">
-          <div class="panel-header">Run status</div>
-          <div class="panel-body">
+    <!-- Status + quick links as cards below -->
+    <div id="status-section" class="hidden" style="margin-top:24px">
+      <div class="section-title" style="margin-bottom:16px">Run Status</div>
+      <div class="cards-grid">
+        <div class="status-card">
+          <div class="status-card-header">Current Run</div>
+          <div class="status-card-body">
             <div class="status-row">
               <span class="status-label">Test</span>
               <span class="status-value" id="st-spec">—</span>
@@ -462,16 +528,16 @@
               <span class="status-label">Run</span>
               <span class="status-value" id="st-run">#—</span>
             </div>
-            <div id="st-links" class="action-links" style="display:none">
-              <a id="link-gh" class="btn btn-outline" href="#" target="_blank" rel="noopener">GitHub Actions</a>
-              <a id="link-allure" class="btn btn-primary" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Allure Report</a>
+            <div id="st-links" class="status-links" style="display:none">
+              <a id="link-gh" class="btn btn-outline btn-sm" href="#" target="_blank" rel="noopener">View on GitHub</a>
+              <a id="link-allure" class="btn btn-primary btn-sm" href="https://kcpl-automation-suite.vercel.app" target="_blank" rel="noopener">Allure Report</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <script>
@@ -522,11 +588,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: usernameInput.value, password: passwordInput.value }),
       });
-      if (res.ok) {
-        showMain();
-      } else {
-        loginError.style.display = 'block';
-      }
+      if (res.ok) { showMain(); }
+      else { loginError.style.display = 'block'; }
     } catch {
       loginError.textContent = 'Network error. Try again.';
       loginError.style.display = 'block';
@@ -547,10 +610,7 @@
   async function checkSession() {
     try {
       const res = await fetch('/api/status?triggeredAt=0');
-      if (res.status !== 401) {
-        showMain();
-        resumeActiveRun();
-      }
+      if (res.status !== 401) { showMain(); resumeActiveRun(); }
     } catch {}
   }
   checkSession();
@@ -560,8 +620,7 @@
     if (!saved) return;
     try {
       const run = JSON.parse(saved);
-      if (!run.triggeredAt) return;
-      if (Date.now() - run.triggeredAt > 3600000) {
+      if (!run.triggeredAt || Date.now() - run.triggeredAt > 3600000) {
         localStorage.removeItem('kcpl_active_run');
         return;
       }
@@ -571,9 +630,7 @@
       $('#st-links').style.display = 'none';
       statusSection.classList.remove('hidden');
       startPolling(run.triggeredAt);
-    } catch {
-      localStorage.removeItem('kcpl_active_run');
-    }
+    } catch { localStorage.removeItem('kcpl_active_run'); }
   }
 
   function buildPicker() {
@@ -581,7 +638,7 @@
 
     const allRow = document.createElement('div');
     allRow.className = 'all-row selected';
-    allRow.innerHTML = '<span class="spec-name">All tests (full suite)</span>';
+    allRow.innerHTML = '<span class="suite-name">All tests (full suite)</span>';
     allRow.addEventListener('click', () => {
       clearSelections();
       allRow.classList.add('selected');
@@ -594,32 +651,26 @@
       const wrapper = document.createElement('div');
 
       const row = document.createElement('div');
-      row.className = 'spec-row';
+      row.className = 'suite-row';
       row.innerHTML = `
-        <span class="spec-arrow">&#9654;</span>
-        <span class="spec-name">${spec.label}</span>
-        <span class="spec-count"></span>
-        <button class="spec-run-btn">Run all</button>
+        <span class="suite-arrow">&#9654;</span>
+        <span class="suite-name">${spec.label}</span>
+        <span class="suite-badge"></span>
+        <button class="suite-action">Run all</button>
       `;
 
-      const arrow = row.querySelector('.spec-arrow');
-      const countEl = row.querySelector('.spec-count');
-      const runBtn = row.querySelector('.spec-run-btn');
-
+      const arrow = row.querySelector('.suite-arrow');
+      const countEl = row.querySelector('.suite-badge');
+      const runBtn = row.querySelector('.suite-action');
       const testList = document.createElement('div');
-      testList.className = 'test-sub';
+      testList.className = 'suite-sub';
 
       row.addEventListener('click', (e) => {
         if (e.target === runBtn) return;
         const isOpen = testList.classList.contains('open');
-        if (isOpen) {
-          testList.classList.remove('open');
-          arrow.classList.remove('open');
-        } else {
-          testList.classList.add('open');
-          arrow.classList.add('open');
-          loadTests(spec.file, testList, countEl);
-        }
+        testList.classList.toggle('open');
+        arrow.classList.toggle('open');
+        if (!isOpen) loadTests(spec.file, testList, countEl);
       });
 
       runBtn.addEventListener('click', (e) => {
@@ -641,32 +692,26 @@
   }
 
   async function loadTests(file, container, countEl) {
-    if (testCache[file]) {
-      renderTests(file, testCache[file], container, countEl);
-      return;
-    }
-    container.innerHTML = '<div class="test-loading"><span class="spinner"></span>Loading...</div>';
+    if (testCache[file]) { renderTests(file, testCache[file], container, countEl); return; }
+    container.innerHTML = '<div class="suite-loading"><span class="spinner"></span>Loading...</div>';
     try {
       const res = await fetch(`/api/tests?file=${encodeURIComponent(file)}`);
-      if (!res.ok) { container.innerHTML = '<div class="test-loading">Failed to load</div>'; return; }
+      if (!res.ok) { container.innerHTML = '<div class="suite-loading">Failed to load</div>'; return; }
       const data = await res.json();
       const tests = data[file] || [];
       testCache[file] = tests;
       renderTests(file, tests, container, countEl);
-    } catch {
-      container.innerHTML = '<div class="test-loading">Failed to load</div>';
-    }
+    } catch { container.innerHTML = '<div class="suite-loading">Failed to load</div>'; }
   }
 
   function renderTests(file, tests, container, countEl) {
-    countEl.textContent = tests.length;
+    countEl.textContent = tests.length + ' tests';
     container.innerHTML = '';
-    if (tests.length === 0) { container.innerHTML = '<div class="test-loading">No tests</div>'; return; }
-
+    if (!tests.length) { container.innerHTML = '<div class="suite-loading">No tests</div>'; return; }
     tests.forEach((name) => {
       const item = document.createElement('div');
-      item.className = 'test-item';
-      item.innerHTML = `<span class="test-item-dot"></span><span class="test-item-name">${escapeHtml(name)}</span>`;
+      item.className = 'suite-test';
+      item.innerHTML = `<span class="suite-test-dot"></span><span class="suite-test-name">${escapeHtml(name)}</span>`;
       item.addEventListener('click', () => {
         clearSelections();
         item.classList.add('selected');
@@ -678,11 +723,7 @@
     });
   }
 
-  function escapeHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
+  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
   async function trigger() {
     triggerBtn.disabled = true;
@@ -700,18 +741,12 @@
         triggerBtn.disabled = false;
         return;
       }
-
       $('#st-spec').textContent = selection.label;
       setBadge('waiting');
       $('#st-run-row').style.display = 'none';
       $('#st-links').style.display = 'none';
       statusSection.classList.remove('hidden');
-
-      localStorage.setItem('kcpl_active_run', JSON.stringify({
-        triggeredAt: data.triggeredAt,
-        label: selection.label,
-      }));
-
+      localStorage.setItem('kcpl_active_run', JSON.stringify({ triggeredAt: data.triggeredAt, label: selection.label }));
       startPolling(data.triggeredAt);
     } catch {
       triggerError.textContent = 'Network error';
@@ -723,18 +758,11 @@
   triggerBtn.addEventListener('click', trigger);
 
   function setBadge(status) {
-    const map = {
-      waiting: 'badge-waiting',
-      queued: 'badge-queued',
-      in_progress: 'badge-running',
-      completed: 'badge-completed',
-      failure: 'badge-failed',
-    };
+    const map = { waiting:'badge-waiting', queued:'badge-queued', in_progress:'badge-running', completed:'badge-completed', failure:'badge-failed' };
     const cls = map[status] || 'badge-waiting';
     const text = status === 'in_progress' ? 'running' : status;
-    const spinner = (status === 'waiting' || status === 'queued' || status === 'in_progress')
-      ? '<span class="spinner"></span>' : '';
-    $('#st-badge').innerHTML = `${spinner}<span class="badge ${cls}">${text}</span>`;
+    const sp = ['waiting','queued','in_progress'].includes(status) ? '<span class="spinner"></span>' : '';
+    $('#st-badge').innerHTML = `${sp}<span class="badge ${cls}">${text}</span>`;
   }
 
   function startPolling(triggeredAt) {
@@ -745,23 +773,10 @@
         if (res.status === 401) { location.reload(); return; }
         const data = await res.json();
         if (!data.found) { setBadge('waiting'); return; }
-
-        setBadge(data.conclusion === 'failure' ? 'failure' :
-                 data.conclusion === 'success' ? 'completed' : data.status);
-
-        if (data.run_number) {
-          $('#st-run-row').style.display = 'flex';
-          $('#st-run').textContent = `#${data.run_number}`;
-        }
-        if (data.html_url) {
-          $('#st-links').style.display = 'flex';
-          $('#link-gh').href = data.html_url;
-        }
-        if (data.status === 'completed') {
-          clearInterval(pollTimer);
-          pollTimer = null;
-          localStorage.removeItem('kcpl_active_run');
-        }
+        setBadge(data.conclusion === 'failure' ? 'failure' : data.conclusion === 'success' ? 'completed' : data.status);
+        if (data.run_number) { $('#st-run-row').style.display = 'flex'; $('#st-run').textContent = `#${data.run_number}`; }
+        if (data.html_url) { $('#st-links').style.display = 'flex'; $('#link-gh').href = data.html_url; }
+        if (data.status === 'completed') { clearInterval(pollTimer); pollTimer = null; localStorage.removeItem('kcpl_active_run'); }
       } catch {}
     };
     poll();
