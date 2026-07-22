@@ -57,6 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   return res.status(200).json({
     found: true,
+    run_id: run.id,
     status: run.status,
     conclusion: run.conclusion,
     html_url: run.html_url,
