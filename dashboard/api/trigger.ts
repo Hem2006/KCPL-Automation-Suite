@@ -36,17 +36,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Server misconfigured — no GITHUB_PAT' });
   }
 
-  const { specFile, testGrep } = req.body ?? {};
-  if (!specFile || !VALID_SPECS.includes(specFile)) {
-    return res.status(400).json({ error: 'Invalid spec file', valid: VALID_SPECS });
+  const { selections } = req.body ?? {};
+  if (!Array.isArray(selections) || selections.length === 0) {
+    return res.status(400).json({ error: 'selections must be a non-empty array' });
   }
+
+  const cleaned: { specFile: string; testNames: string[] }[] = [];
+  for (const sel of selections) {
+    const specFile = sel?.specFile;
+    if (typeof specFile !== 'string' || !VALID_SPECS.includes(specFile)) {
+      return res.status(400).json({ error: 'Invalid spec file', valid: VALID_SPECS });
+    }
+    const testNames = Array.isArray(sel?.testNames)
+      ? sel.testNames.filter((n: unknown): n is string => typeof n === 'string' && n.trim().length > 0)
+      : [];
+    cleaned.push({ specFile, testNames });
+  }
+
+  // "all" (the full suite) supersedes every other selection.
+  const finalSelections = cleaned.some((s) => s.specFile === 'all')
+    ? [{ specFile: 'all', testNames: [] }]
+    : cleaned;
 
   const triggeredAt = Date.now();
 
-  const inputs: Record<string, string> = { spec_file: specFile };
-  if (testGrep && typeof testGrep === 'string' && testGrep.trim()) {
-    inputs.test_grep = testGrep.trim();
-  }
+  const inputs: Record<string, string> = { selections: JSON.stringify(finalSelections) };
 
   const ghRes = await fetch(
     'https://api.github.com/repos/Hem2006/KCPL-Automation-Suite/actions/workflows/test.yml/dispatches',

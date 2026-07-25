@@ -27,7 +27,17 @@ class SummaryReporter implements Reporter {
     };
     walk(this.suite);
 
-    fs.writeFileSync('test-summary.json', JSON.stringify({ passed, failed, flaky, skipped }, null, 2));
+    // CI may invoke Playwright multiple times in one job (once per selected
+    // spec/test group) — accumulate onto any summary already written this run.
+    let prior = { passed: 0, failed: 0, flaky: 0, skipped: 0 };
+    try { prior = JSON.parse(fs.readFileSync('test-summary.json', 'utf8')); } catch {}
+
+    fs.writeFileSync('test-summary.json', JSON.stringify({
+      passed: prior.passed + passed,
+      failed: prior.failed + failed,
+      flaky: prior.flaky + flaky,
+      skipped: prior.skipped + skipped,
+    }, null, 2));
   }
 }
 

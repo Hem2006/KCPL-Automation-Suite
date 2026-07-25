@@ -259,7 +259,19 @@
   }
   .suite-row:last-child { border-bottom: none; }
   .suite-row:hover { background: #fafbfc; }
-  .suite-row.selected { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
+  .suite-row:has(input:checked),
+  .suite-row:has(input:indeterminate) { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
+
+  .suite-row input[type="checkbox"],
+  .suite-test input[type="checkbox"],
+  .all-row input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
 
   .suite-arrow {
     width: 20px;
@@ -267,6 +279,7 @@
     color: var(--text-dim);
     flex-shrink: 0;
     transition: transform 0.12s;
+    text-align: center;
   }
   .suite-arrow.open { transform: rotate(90deg); color: var(--primary); }
 
@@ -287,24 +300,6 @@
     margin-left: 8px;
   }
 
-  .suite-action {
-    padding: 4px 14px;
-    margin-left: 8px;
-    font-size: 12px;
-    border-radius: 5px;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.1s;
-    font-weight: 600;
-    font-family: var(--font);
-    width: auto;
-  }
-  .suite-row:hover .suite-action { opacity: 1; }
-  .suite-action:hover { background: var(--primary-hover); }
-
   .suite-sub {
     display: none;
     background: #fafbfc;
@@ -323,7 +318,7 @@
     color: var(--text-mid);
   }
   .suite-test:hover { background: #f3f4f6; color: var(--text); }
-  .suite-test.selected {
+  .suite-test:has(input:checked) {
     background: var(--primary-light);
     color: var(--primary);
     font-weight: 600;
@@ -331,15 +326,6 @@
     padding-left: 49px;
   }
 
-  .suite-test-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #d1d5db;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-  .suite-test.selected .suite-test-dot { background: var(--primary); }
   .suite-test-name { flex: 1; }
 
   .suite-loading {
@@ -359,7 +345,7 @@
     transition: background 0.08s;
   }
   .all-row:hover { background: #fafbfc; }
-  .all-row.selected { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
+  .all-row:has(input:checked) { background: var(--primary-light); border-left: 3px solid var(--primary); padding-left: 17px; }
   .all-row .suite-name { font-weight: 700; }
 
   /* Selection + trigger bar */
@@ -583,8 +569,13 @@
 
   let pollTimer = null;
   let currentRunId = null;
-  let selection = { specFile: 'all', testGrep: '', label: 'All tests (full suite)' };
+  // Multi-select state: allChecked = "All tests" master checkbox.
+  // selections: Map<specFile, 'all' | Set<testName>>
+  let allChecked = true;
+  let selections = new Map();
+  let selectionLabel = 'All tests (full suite)';
   const testCache = {};
+  const specRows = {}; // file -> { checkbox, testCheckboxes: Map<name, input> }
   const cancelBtn = $('#cancel-btn');
 
   async function login() {
@@ -654,17 +645,25 @@
     } catch { localStorage.removeItem('kcpl_active_run'); }
   }
 
+  let allCheckboxEl = null;
+
   function buildPicker() {
     picker.innerHTML = '';
 
-    const allRow = document.createElement('div');
-    allRow.className = 'all-row selected';
-    allRow.innerHTML = '<span class="suite-name">All tests (full suite)</span>';
-    allRow.addEventListener('click', () => {
-      clearSelections();
-      allRow.classList.add('selected');
-      selection = { specFile: 'all', testGrep: '', label: 'All tests (full suite)' };
-      selDisplay.textContent = selection.label;
+    const allRow = document.createElement('label');
+    allRow.className = 'all-row';
+    allRow.innerHTML = '<input type="checkbox" class="all-checkbox" checked><span class="suite-name">All tests (full suite)</span>';
+    allCheckboxEl = allRow.querySelector('.all-checkbox');
+    allCheckboxEl.addEventListener('change', () => {
+      if (allCheckboxEl.checked) {
+        allChecked = true;
+        selections.clear();
+      } else if (selections.size === 0) {
+        // Don't allow an empty state; re-check "all" if nothing else is selected.
+        allCheckboxEl.checked = true;
+        allChecked = true;
+      }
+      syncUI();
     });
     picker.appendChild(allRow);
 
@@ -674,42 +673,40 @@
       const row = document.createElement('div');
       row.className = 'suite-row';
       row.innerHTML = `
+        <input type="checkbox" class="spec-checkbox">
         <span class="suite-arrow">&#9654;</span>
         <span class="suite-name">${spec.label}</span>
         <span class="suite-badge"></span>
-        <button class="suite-action">Run all</button>
       `;
 
+      const specCheckbox = row.querySelector('.spec-checkbox');
       const arrow = row.querySelector('.suite-arrow');
       const countEl = row.querySelector('.suite-badge');
-      const runBtn = row.querySelector('.suite-action');
       const testList = document.createElement('div');
       testList.className = 'suite-sub';
 
+      specRows[spec.file] = { checkbox: specCheckbox, testCheckboxes: new Map() };
+
       row.addEventListener('click', (e) => {
-        if (e.target === runBtn) return;
+        if (e.target === specCheckbox) return;
         const isOpen = testList.classList.contains('open');
         testList.classList.toggle('open');
         arrow.classList.toggle('open');
         if (!isOpen) loadTests(spec.file, testList, countEl);
       });
 
-      runBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        clearSelections();
-        row.classList.add('selected');
-        selection = { specFile: spec.file, testGrep: '', label: spec.label };
-        selDisplay.textContent = selection.label;
+      specCheckbox.addEventListener('click', (e) => e.stopPropagation());
+      specCheckbox.addEventListener('change', () => {
+        allChecked = false;
+        if (specCheckbox.checked) selections.set(spec.file, 'all');
+        else selections.delete(spec.file);
+        syncUI();
       });
 
       wrapper.appendChild(row);
       wrapper.appendChild(testList);
       picker.appendChild(wrapper);
     });
-  }
-
-  function clearSelections() {
-    picker.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
   }
 
   async function loadTests(file, container, countEl) {
@@ -728,23 +725,75 @@
   function renderTests(file, tests, container, countEl) {
     countEl.textContent = tests.length + ' tests';
     container.innerHTML = '';
+    specRows[file].testCheckboxes.clear();
     if (!tests.length) { container.innerHTML = '<div class="suite-loading">No tests</div>'; return; }
     tests.forEach((name) => {
-      const item = document.createElement('div');
+      const item = document.createElement('label');
       item.className = 'suite-test';
-      item.innerHTML = `<span class="suite-test-dot"></span><span class="suite-test-name">${escapeHtml(name)}</span>`;
-      item.addEventListener('click', () => {
-        clearSelections();
-        item.classList.add('selected');
-        const specLabel = SPECS.find(s => s.file === file)?.label || file;
-        selection = { specFile: file, testGrep: name, label: specLabel + ' > ' + name };
-        selDisplay.textContent = selection.label;
+      item.innerHTML = `<input type="checkbox"><span class="suite-test-name">${escapeHtml(name)}</span>`;
+      const checkbox = item.querySelector('input');
+      specRows[file].testCheckboxes.set(name, checkbox);
+      checkbox.addEventListener('change', () => {
+        toggleSpecTest(file, name, checkbox.checked, tests);
       });
       container.appendChild(item);
     });
+    syncSpecUI(file);
+  }
+
+  function toggleSpecTest(file, name, checked, allNames) {
+    allChecked = false;
+    const current = selections.get(file);
+    const set = current === 'all' ? new Set(allNames) : new Set(current instanceof Set ? current : []);
+    if (checked) set.add(name); else set.delete(name);
+    if (set.size === 0) selections.delete(file);
+    else if (set.size === allNames.length) selections.set(file, 'all');
+    else selections.set(file, set);
+    syncUI();
+  }
+
+  function syncSpecUI(file) {
+    const rowInfo = specRows[file];
+    if (!rowInfo) return;
+    const val = selections.get(file);
+    rowInfo.checkbox.checked = val === 'all';
+    rowInfo.checkbox.indeterminate = val instanceof Set && val.size > 0;
+    rowInfo.testCheckboxes.forEach((cb, name) => {
+      cb.checked = val === 'all' || (val instanceof Set && val.has(name));
+    });
+  }
+
+  function syncUI() {
+    if (allCheckboxEl) allCheckboxEl.checked = allChecked;
+    Object.keys(specRows).forEach(syncSpecUI);
+    updateSelectionDisplay();
+  }
+
+  function updateSelectionDisplay() {
+    if (allChecked || selections.size === 0) {
+      selectionLabel = 'All tests (full suite)';
+      selDisplay.textContent = selectionLabel;
+      return;
+    }
+    const parts = [];
+    selections.forEach((val, file) => {
+      const spec = SPECS.find(s => s.file === file);
+      const label = spec ? spec.label : file;
+      parts.push(val === 'all' ? label : `${label} (${val.size} test${val.size > 1 ? 's' : ''})`);
+    });
+    selectionLabel = parts.length > 3 ? `${parts.slice(0, 3).join(', ')} +${parts.length - 3} more` : parts.join(', ');
+    selDisplay.textContent = selectionLabel;
   }
 
   function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+  function buildSelectionsPayload() {
+    if (allChecked || selections.size === 0) return [{ specFile: 'all', testNames: [] }];
+    return Array.from(selections.entries()).map(([specFile, val]) => ({
+      specFile,
+      testNames: val === 'all' ? [] : Array.from(val),
+    }));
+  }
 
   async function trigger() {
     triggerBtn.disabled = true;
@@ -753,7 +802,7 @@
       const res = await fetch('/api/trigger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ specFile: selection.specFile, testGrep: selection.testGrep }),
+        body: JSON.stringify({ selections: buildSelectionsPayload() }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -762,14 +811,14 @@
         triggerBtn.disabled = false;
         return;
       }
-      $('#st-spec').textContent = selection.label;
+      $('#st-spec').textContent = selectionLabel;
       setBadge('waiting');
       $('#st-run-row').style.display = 'none';
       $('#st-links').style.display = 'none';
       currentRunId = null;
       cancelBtn.classList.add('hidden');
       statusSection.classList.remove('hidden');
-      localStorage.setItem('kcpl_active_run', JSON.stringify({ triggeredAt: data.triggeredAt, label: selection.label }));
+      localStorage.setItem('kcpl_active_run', JSON.stringify({ triggeredAt: data.triggeredAt, label: selectionLabel }));
       startPolling(data.triggeredAt);
     } catch {
       triggerError.textContent = 'Network error';
