@@ -12,7 +12,6 @@ test.describe('Login - Smoke @smoke', () => {
   });
 
   test('login page loads with all elements', async () => {
-    test.fail()
     await expect(loginPage.heading).toBeVisible();
     await expect(loginPage.usernameInput).toBeVisible();
     await expect(loginPage.passwordInput).toBeVisible();
