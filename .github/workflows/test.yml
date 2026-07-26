@@ -60,6 +60,8 @@ jobs:
         env:
           CI: true
           SELECTIONS: ${{ github.event.inputs.selections }}
+          APP_USERNAME: ${{ secrets.APP_USERNAME }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
         run: |
           FAILED=0
 

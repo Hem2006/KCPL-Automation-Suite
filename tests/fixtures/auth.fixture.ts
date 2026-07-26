@@ -24,7 +24,7 @@ export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
     const page = await sharedContext.newPage();
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login('kcpl', 'kcpl');
+    await loginPage.login(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
     await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
     await use(page);
   }, { scope: 'worker' }],

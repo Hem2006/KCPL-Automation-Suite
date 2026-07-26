@@ -27,7 +27,7 @@ test.describe('Login - Smoke @smoke', () => {
   });
 
   test('successful login navigates to dashboard', async ({ page }) => {
-    await loginPage.login('kcpl', 'kcpl');
+    await loginPage.login(process.env.APP_USERNAME!, process.env.APP_PASSWORD!);
     await expect(page).toHaveURL(/#\/dashboard/);
     await expect(page.getByText('KCPL Company')).toBeVisible();
   });
