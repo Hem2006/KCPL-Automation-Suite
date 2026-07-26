@@ -26,11 +26,11 @@ export class LoginPage {
     // localStorage.getItem('permissions'). In a fresh CI browser both are null,
     // causing n.includes() to throw on undefined. Pre-seeding userName makes
     // the short-circuit fire so React can mount before login happens.
-    await this.page.addInitScript(() => {
+    await this.page.addInitScript((username: string) => {
       if (!localStorage.getItem('userName')) {
-        localStorage.setItem('userName', 'kcpl');
+        localStorage.setItem('userName', username);
       }
-    });
+    }, process.env.APP_USERNAME!);
 
     await this.page.goto('/admin/index.html');
     await this.page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});

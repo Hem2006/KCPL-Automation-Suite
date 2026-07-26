@@ -26,11 +26,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     )
   `;
 
-  const hash = await bcrypt.hash('kcpl', 10);
+  const dashboardUsername = process.env.DASHBOARD_USERNAME;
+  const dashboardPassword = process.env.DASHBOARD_PASSWORD;
+  if (!dashboardUsername || !dashboardPassword) {
+    return res.status(500).json({ error: 'DASHBOARD_USERNAME/DASHBOARD_PASSWORD not configured' });
+  }
+
+  const hash = await bcrypt.hash(dashboardPassword, 10);
 
   await sql`
     INSERT INTO users (username, password_hash)
-    VALUES ('kcpl', ${hash})
+    VALUES (${dashboardUsername}, ${hash})
     ON CONFLICT (username) DO UPDATE SET password_hash = ${hash}
   `;
 

@@ -10,6 +10,7 @@
 import { chromium, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
+import 'dotenv/config';
 
 const OUT = path.join(process.cwd(), 'dumps');
 const BASE_URL = 'https://dev.mykcpl.com/admin/index.html';
@@ -145,6 +146,12 @@ async function visitPage(page: Page, text: string, outPath: string) {
 // Main
 // ---------------------------------------------------------------------------
 (async () => {
+  const username = process.env.APP_USERNAME;
+  const password = process.env.APP_PASSWORD;
+  if (!username || !password) {
+    throw new Error('APP_USERNAME/APP_PASSWORD not set. Add them to your .env file.');
+  }
+
   const browser = await chromium.launch({ headless: false, slowMo: 150 });
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
   const page = await ctx.newPage();
@@ -153,8 +160,8 @@ async function visitPage(page: Page, text: string, outPath: string) {
   console.log('Logging in...');
   await page.goto(BASE_URL);
   await page.locator('input[placeholder="Enter your username"]').waitFor({ state: 'visible', timeout: 20000 });
-  await page.locator('input[placeholder="Enter your username"]').fill('kcpl');
-  await page.locator('input[placeholder="Enter your password"]').fill('kcpl');
+  await page.locator('input[placeholder="Enter your username"]').fill(username);
+  await page.locator('input[placeholder="Enter your password"]').fill(password);
   await page.locator('button[type="submit"]').click();
   // Wait for backdrop to clear after login
   await page.locator('.MuiBackdrop-root').waitFor({ state: 'hidden', timeout: 20000 }).catch(() => {});
