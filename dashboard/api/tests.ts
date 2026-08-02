@@ -21,6 +21,7 @@ const SPEC_FILES = [
   '14-hr.spec.ts',
   '15-audit.spec.ts',
   '16-legal.spec.ts',
+  '17-dashboard.spec.ts',
 ];
 
 function parseTestNames(source: string): string[] {

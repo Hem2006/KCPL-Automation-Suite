@@ -37,4 +37,20 @@ test.describe('Receipt - Smoke @smoke', () => {
     await amountField.fill('5000');
     await expect(amountField).toHaveValue('5000');
   });
+
+  test('receipt form — fills form and generates receipt', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
+    await page.getByLabel('Phone number').fill('8147115850');
+
+    const groupField = page.getByLabel('Group / ticket no');
+    await groupField.click();
+    await page.getByRole('option').first().click();
+
+    await page.getByLabel('Amount').fill('500');
+    await page.getByLabel('Narration').fill('Automated smoke test receipt');
+
+    await page.getByRole('button', { name: 'Receipt Generation' }).click();
+
+    await expect(page.getByText('Receipt Created Successfully')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/Receipt no/)).toBeVisible();
+  });
 });

@@ -19,6 +19,7 @@ const VALID_SPECS = [
   '14-hr.spec.ts',
   '15-audit.spec.ts',
   '16-legal.spec.ts',
+  '17-dashboard.spec.ts',
 ];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

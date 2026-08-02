@@ -73,6 +73,36 @@ test.describe('Payment voucher - Smoke @smoke', () => {
     await expect(page.getByText(/Total Sb payable/)).toBeVisible({ timeout: 10000 });
   });
 
+  test('sb & asb — completes a payment voucher for the first pending payable', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
+    await page.getByText('Sb & Asb', { exact: true }).click();
+    await noBackdrop(page);
+    await page.getByText('Sb payable list').waitFor({ state: 'visible', timeout: 10000 });
+
+    // Rows stay listed even once fully paid (Net Payable drops to 0 and the payment
+    // form no longer renders), so the real "anything left to pay" check happens after
+    // opening the record, not from row count alone. Skip rather than fail either way —
+    // this depends on live dev data (a pending auction payable) outside the suite's control.
+    const hasRows = await page.locator('.MuiDataGrid-row').first().isVisible({ timeout: 10000 }).catch(() => false);
+    test.skip(!hasRows, 'No Sb payable rows available in dev data right now');
+
+    await page.locator('.MuiDataGrid-row').first().locator('.MuiDataGrid-cell[data-colindex="1"]').click();
+    await noBackdrop(page);
+    const hasPaymentForm = await page.getByText('Payment voucher generation').isVisible({ timeout: 15000 }).catch(() => false);
+    test.skip(!hasPaymentForm, 'The first Sb payable row is already fully settled (Net Payable 0)');
+
+    const netPayable = await page.getByTestId('Net payable').textContent();
+
+    await page.getByLabel('Payment type').dispatchEvent('mousedown');
+    await page.getByRole('option', { name: 'CASH', exact: true }).click();
+
+    await page.getByLabel('Ledger account').fill('Cash Account');
+    await page.getByLabel('Amount').fill((netPayable ?? '0').trim());
+    await page.getByLabel('Narration').fill('Automated smoke test payment');
+
+    await page.getByRole('button', { name: 'Generate payment voucher' }).click();
+    await expect(page.getByText('Invoice number generated successfully')).toBeVisible({ timeout: 15000 });
+  });
+
   test('sb & asb — search box accepts input', async ({ authenticatedPage: page }) => {
     await page.getByText('Sb & Asb', { exact: true }).click();
     await noBackdrop(page);

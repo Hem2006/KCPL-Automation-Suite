@@ -12,6 +12,14 @@ const noBackdrop = (page: Page) => page.waitForFunction(() => {
 const openDropdown = (page: Page, label: string) =>
   page.locator('.MuiFormControl-root').filter({ hasText: label }).locator('.MuiSelect-select').click();
 
+// The New Document Dept Entry form sits close enough to the sidebar that a normal
+// click on some Autocomplete fields is intercepted by the sidebar panel — same
+// class of issue as the NPS/SB/ASB/Others radios below, worked around the same way.
+const selectAutocomplete = async (page: Page, label: string, optionName: string) => {
+  await page.getByLabel(label).dispatchEvent('mousedown');
+  await page.getByRole('option', { name: optionName, exact: true }).click();
+};
+
 test.describe('Guarantor details - Smoke @smoke', () => {
   test.beforeEach(async ({ authenticatedPage: page, sidebar }, testInfo) => {
     await tagAllure(testInfo, 'Guarantor Details', [
@@ -97,6 +105,69 @@ test.describe('Guarantor details - Smoke @smoke', () => {
 
     await expect(page.locator('#date')).toBeVisible();
     await expect(page.locator('button:has([data-testid="DownloadRoundedIcon"])')).toBeVisible();
+  });
+
+  test('add guarantor — Add New Guarantor fills form and saves', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
+    // Known app bug: Save on the New Document Dept Entry form does not redirect or
+    // persist, even with every field filled correctly via real Playwright interaction
+    // (confirmed independently of any test-authoring workaround). Remove test.fail()
+    // once the app is fixed — the assertions below already encode real success.
+    test.fail();
+    await page.getByText('Add guarantor', { exact: true }).click();
+    await noBackdrop(page);
+    await page.getByText('Upload document').waitFor({ state: 'visible', timeout: 10000 });
+
+    // Open the first pending record's detail page to add a guarantor against it.
+    await page.locator('.MuiDataGrid-row').first().waitFor({ state: 'visible', timeout: 15000 });
+    await page.locator('.MuiDataGrid-row').first().locator('.MuiDataGrid-cell[data-colindex="1"]').click();
+    await page.getByRole('button', { name: 'Add Guarantor' }).waitFor({ state: 'visible', timeout: 15000 });
+    await noBackdrop(page);
+
+    await page.getByRole('button', { name: 'Add Guarantor' }).click();
+    const guarantorPhone = '99' + Date.now().toString().slice(-8);
+    await page.getByPlaceholder('+91 9000000000').fill(guarantorPhone);
+    await page.getByLabel('Name').click();
+    await page.getByRole('option', { name: 'Add New Guarantor' }).waitFor({ state: 'visible', timeout: 10000 });
+    await page.getByRole('option', { name: 'Add New Guarantor' }).click();
+    await page.getByRole('button', { name: 'Add Guarantor' }).click();
+
+    // "New Document Dept Entry" form — same layout as the Dashboard's New Member form.
+    await page.getByLabel('Aadhar Card No').waitFor({ state: 'visible', timeout: 15000 });
+    await page.getByLabel('Aadhar Card No').fill('345678901234');
+    await page.getByLabel('Name', { exact: true }).first().fill('Guarantor Test Person');
+    await page.getByLabel('Name', { exact: true }).nth(1).fill('Guarantor Test Father');
+
+    await selectAutocomplete(page, 'Gender', 'Male');
+    await page.getByLabel('Date of Birth').fill('10/03/1985');
+    await selectAutocomplete(page, 'Created branch', 'CORP_OFFICE');
+    await selectAutocomplete(page, 'Occupation', 'Employee');
+    await page.getByLabel('Annual Income').fill('400000');
+
+    await page.getByLabel('Res.Door No.').fill('45B');
+    await page.getByLabel('Land mark').fill('Near Test Circle');
+    await page.getByLabel('Address', { exact: true }).fill('456 Guarantor Street');
+    await page.getByLabel('Pin Code').fill('560010');
+    await page.getByLabel('City').fill('Bengaluru');
+    await page.getByLabel('District').fill('Bengaluru Urban');
+    await page.getByLabel('State').fill('Karnataka');
+    await page.getByLabel('Country').fill('India');
+
+    await selectAutocomplete(page, 'Type of employment', 'Private');
+    await page.getByLabel('Department or company name').fill('Guarantor Test Company');
+    await page.getByLabel('Designation').fill('Manager');
+    await page.getByLabel('Ctc').fill('500000');
+    await page.getByLabel('Net Salary').fill('38000');
+
+    const fileInputs = page.locator('input[type="file"]');
+    const fileCount = await fileInputs.count();
+    for (let i = 0; i < fileCount; i++) {
+      await fileInputs.nth(i).setInputFiles('tests/assets/test-image.png').catch(() => {});
+    }
+
+    await page.getByTestId('Save-color-Icon').click();
+    // Save redirects back to the record's guarantor summary page.
+    await page.getByRole('button', { name: 'Add Guarantor' }).waitFor({ state: 'visible', timeout: 15000 });
+    await expect(page.getByText('Surety information')).toBeVisible();
   });
 
   // ─── APROVE GUARANTOR ─────────────────────────────────────────────────────

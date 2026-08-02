@@ -485,7 +485,7 @@
     <div class="section-header">
       <div class="section-title">My Test Suites</div>
       <div style="display:flex; gap:10px">
-        <button class="btn btn-outline" id="smoke-btn" title="Select the happy-flow checks (submenu → radio button) that mirror the app's module/submodule spec">Smoke Tests (10)</button>
+        <button class="btn btn-outline" id="smoke-btn" title="Select the happy-flow checks (submenu → radio button, create/add flows) that mirror the app's module/submodule spec">Smoke Tests (16)</button>
         <button class="btn btn-primary" id="trigger-btn">Run Selected Tests</button>
       </div>
     </div>
@@ -555,6 +555,7 @@
     { file: '14-hr.spec.ts',                    label: '14 - HR' },
     { file: '15-audit.spec.ts',                 label: '15 - Audit' },
     { file: '16-legal.spec.ts',                 label: '16 - Legal' },
+    { file: '17-dashboard.spec.ts',              label: '17 - Dashboard' },
   ];
 
   // Curated "happy flow" checks — one per module/submodule/radio-button node in
@@ -566,19 +567,29 @@
     { specFile: '03-creation.spec.ts', testNames: [
       'scheme view — Modify Scheme opens edit form and Cancel returns',
       'generate payable — all radio buttons open their tables',
+      'credit return — Add New fills form and saves',
+    ] },
+    { specFile: '04-receipt.spec.ts', testNames: [
+      'receipt form — fills form and generates receipt',
     ] },
     { specFile: '05-auction.spec.ts', testNames: [
       'post auction — radio toggle to Successful bid post',
+      'post auction — posts the first pending group for auction',
       'live auction — radio toggle to Re auction',
       'sb list — radio toggle to Re auction',
     ] },
     { specFile: '06-guarantor.spec.ts', testNames: [
       'add guarantor — all radio buttons switch the view',
+      'add guarantor — Add New Guarantor fills form and saves',
       'aprove guarantor — all radio buttons switch the view',
       'secondary approval — all radio buttons switch the view',
     ] },
     { specFile: '07-payment-voucher.spec.ts', testNames: [
       'sb & asb — Subscriber and Company radio buttons switch view',
+      'sb & asb — completes a payment voucher for the first pending payable',
+    ] },
+    { specFile: '17-dashboard.spec.ts', testNames: [
+      'dashboard search — Add member fills the new member form and saves',
     ] },
   ];
   const SMOKE_FLOW_COUNT = SMOKE_FLOW.reduce((n, s) => n + s.testNames.length, 0);

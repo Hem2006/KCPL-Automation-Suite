@@ -136,6 +136,52 @@ test.describe('Auction - Smoke @smoke', () => {
     await page.getByText('Pending for auction post list').waitFor({ state: 'visible', timeout: 15000 });
   });
 
+  test('post auction — posts the first pending group for auction', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
+    await page.locator(POST_AUCTION).click();
+    await page.getByText('Pending for auction post list').waitFor({ state: 'visible', timeout: 15000 });
+    await noBackdrop(page);
+
+    // Each post consumes the row (it moves to Live Auction), so an empty list here
+    // is a legitimate dev-data state, not a test bug — skip rather than fail.
+    const hasRows = await page.locator('.MuiDataGrid-row').first().isVisible({ timeout: 10000 }).catch(() => false);
+    test.skip(!hasRows, 'No pending auction-post rows available in dev data right now');
+
+    // The Group Name column sits under the sidebar overlay, so a real click is
+    // intercepted — dispatch straight to the link element instead (see
+    // `mui_interaction_gotchas` in project memory for the same pattern elsewhere).
+    const groupLink = page.locator('.auction-link-color').first();
+    await groupLink.dispatchEvent('click');
+    await noBackdrop(page);
+
+    // A pending row can land on one of two different pages depending on the
+    // group's auction lifecycle state: a not-yet-started schedule page ("Save &
+    // Post") or an already-run live bidding page with a winner determined
+    // ("Post Auction"). Both represent the same happy-flow action.
+    const savePostBtn = page.getByRole('button', { name: 'Save & Post' });
+    const postAuctionBtn = page.getByRole('button', { name: 'Post Auction', exact: true });
+    await Promise.race([
+      savePostBtn.waitFor({ state: 'visible', timeout: 15000 }),
+      postAuctionBtn.waitFor({ state: 'visible', timeout: 15000 }),
+    ]);
+
+    if (await savePostBtn.isVisible().catch(() => false)) {
+      await savePostBtn.click();
+      await expect(page.getByText('This group successfully posted for auction')).toBeVisible({ timeout: 15000 });
+    } else {
+      await postAuctionBtn.click();
+      // A vacant winning slot prompts a "transfer chit to company" confirmation —
+      // a genuine judgment call, not a plain click-through, so treat it the same
+      // as unsuitable dev data rather than force a choice on the operator's behalf.
+      const confirmDialog = page.getByText('Please select any one of below option');
+      const gotDialog = await confirmDialog.isVisible({ timeout: 15000 }).catch(() => false);
+      test.skip(gotDialog, 'Winning slot is vacant — needs a manual company-transfer decision, not a plain post');
+      await noBackdrop(page).catch(() => {});
+    }
+
+    // Success signal is the redirect back to the pending list.
+    await page.getByText('Pending for auction post list').waitFor({ state: 'visible', timeout: 15000 });
+  });
+
   // ─── LIVE AUCTION ────────────────────────────────────────────────────────────
 
   test('live auction page loads with table and download button', async ({ authenticatedPage: page }) => {

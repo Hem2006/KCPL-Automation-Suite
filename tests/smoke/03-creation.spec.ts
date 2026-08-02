@@ -383,4 +383,44 @@ test.describe('Creation - Smoke @smoke', () => {
     // Chit Count") — match generically instead of assuming a specific radio's label.
     await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
   });
+
+  // ── Credit return / Bid advance — Add New flows ────────────────────────────
+
+  test('credit return — Add New fills form and saves', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
+    await page.getByText('Generate payable', { exact: true }).click();
+    await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
+    await noBackdrop(page);
+
+    await page.getByRole('radio', { name: 'Credit return' }).click();
+    await page.getByText('Total Credit Return Count').waitFor({ state: 'visible', timeout: 15000 });
+    await noBackdrop(page);
+
+    await page.getByRole('button', { name: 'Add New' }).click();
+    await page.getByLabel('Phone number').waitFor({ state: 'visible', timeout: 15000 });
+
+    await page.getByLabel('Phone number').fill('8147115850');
+    const groupField = page.getByLabel('Group / ticket no');
+    await groupField.click();
+    await page.getByRole('option').first().click();
+
+    // Select the return type first — it sets a max-amount cap that the
+    // Amount field validates against, so fill order matters.
+    await page.getByLabel('Credit Return Type').click();
+    await page.getByRole('option', { name: 'Dividend' }).click();
+    await page.getByLabel('Amount').fill('10');
+
+    await page.getByLabel('Narration').fill('Automated smoke test credit return');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Success signal is the redirect back to the list view (same convention as the
+    // Cancellation Chit save test above) — the count label itself doesn't reliably
+    // increment straight after save.
+    await page.getByRole('button', { name: 'Add New' }).waitFor({ state: 'visible', timeout: 15000 });
+    await expect(page.getByText('Total Credit Return Count')).toBeVisible();
+  });
+
+  // Bid advance — Add New is intentionally not covered: it requires a ticket with an
+  // active, un-prized auction bid, and none of the seeded dev accounts (8147115850,
+  // 8147115854, 0000000000) have one — every "Group / ticket no" option renders
+  // aria-disabled for this action. Revisit once a suitable dev fixture exists.
 });
