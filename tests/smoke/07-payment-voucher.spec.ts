@@ -59,7 +59,7 @@ test.describe('Payment voucher - Smoke @smoke', () => {
     await expect(page.getByText('Sb payable list')).toBeVisible({ timeout: 10000 });
   });
 
-  test('sb & asb — Subscriber and Company radio buttons switch view', async ({ authenticatedPage: page }) => {
+  test('sb & asb — Subscriber and Company radio buttons switch view', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByText('Sb & Asb', { exact: true }).click();
     await noBackdrop(page);
     await page.getByText('Sb payable list').waitFor({ state: 'visible', timeout: 10000 });

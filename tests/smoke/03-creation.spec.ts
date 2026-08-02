@@ -117,7 +117,7 @@ test.describe('Creation - Smoke @smoke', () => {
     await expect(page.getByText('Scheme created successfully')).toBeVisible({ timeout: 30000 });
   });
 
-  test('scheme view — Modify Scheme opens edit form and Cancel returns', async ({ authenticatedPage: page }) => {
+  test('scheme view — Modify Scheme opens edit form and Cancel returns', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByTestId('M-enuIt-em').click();
     await page.getByText(/Total Schemes/).waitFor({ state: 'visible', timeout: 60000 });
     await page.locator('.MuiDataGrid-row').first().waitFor({ state: 'visible', timeout: 60000 });
@@ -236,7 +236,7 @@ test.describe('Creation - Smoke @smoke', () => {
 
   // ── Generate Payable radio buttons ────────────────────────────────────────
 
-  test('generate payable — all radio buttons open their tables', async ({ authenticatedPage: page }) => {
+  test('generate payable — all radio buttons open their tables', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByText('Generate payable', { exact: true }).click();
     await page.getByText(/Total .+ Count/).waitFor({ state: 'visible', timeout: 30000 });
     await noBackdrop(page);

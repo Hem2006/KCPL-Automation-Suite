@@ -44,7 +44,7 @@ test.describe('Guarantor details - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('add guarantor — all radio buttons switch the view', async ({ authenticatedPage: page }) => {
+  test('add guarantor — all radio buttons switch the view', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByText('Add guarantor', { exact: true }).click();
     await noBackdrop(page);
     await page.getByText('Upload document').waitFor({ state: 'visible', timeout: 10000 });
@@ -114,7 +114,7 @@ test.describe('Guarantor details - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('aprove guarantor — all radio buttons switch the view', async ({ authenticatedPage: page }) => {
+  test('aprove guarantor — all radio buttons switch the view', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByText('Aprove guarantor', { exact: true }).click();
     await noBackdrop(page);
     await page.getByText('Approve document').waitFor({ state: 'visible', timeout: 10000 });
@@ -184,7 +184,7 @@ test.describe('Guarantor details - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('secondary approval — all radio buttons switch the view', async ({ authenticatedPage: page }) => {
+  test('secondary approval — all radio buttons switch the view', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.getByRole('menuitem', { name: 'Secondary Approval', exact: true }).click();
     await noBackdrop(page);
     await page.getByText(/Total count/).waitFor({ state: 'visible', timeout: 10000 });

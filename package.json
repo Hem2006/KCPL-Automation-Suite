@@ -6,6 +6,7 @@
     "test": "npx playwright test",
     "test:smoke": "npx playwright test --grep @smoke",
     "test:regression": "npx playwright test --grep @regression",
+    "test:happy-flow": "npx playwright test --grep @happy-flow",
     "test:headed": "cross-env SLOW_MO=800 npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
     "report": "npx playwright show-report",

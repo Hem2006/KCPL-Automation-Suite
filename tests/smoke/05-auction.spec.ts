@@ -55,7 +55,7 @@ test.describe('Auction - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('post auction — radio toggle to Successful bid post', async ({ authenticatedPage: page }) => {
+  test('post auction — radio toggle to Successful bid post', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.locator(POST_AUCTION).click();
     await page.getByText('Pending for auction post list').waitFor({ state: 'visible', timeout: 15000 });
     await noBackdrop(page);
@@ -152,7 +152,7 @@ test.describe('Auction - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('live auction — radio toggle to Re auction', async ({ authenticatedPage: page }) => {
+  test('live auction — radio toggle to Re auction', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.locator(LIVE_AUCTION).click();
     await page.getByText('Live Auction List').waitFor({ state: 'visible', timeout: 15000 });
     await noBackdrop(page);
@@ -206,7 +206,7 @@ test.describe('Auction - Smoke @smoke', () => {
     await expect(page.locator('[aria-label="Go to next page"]')).toBeVisible();
   });
 
-  test('sb list — radio toggle to Re auction', async ({ authenticatedPage: page }) => {
+  test('sb list — radio toggle to Re auction', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.locator(SB_LIST).click();
     await page.getByText(/Total count - \d+/).waitFor({ state: 'visible', timeout: 15000 });
     await noBackdrop(page);

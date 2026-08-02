@@ -484,7 +484,10 @@
 
     <div class="section-header">
       <div class="section-title">My Test Suites</div>
-      <button class="btn btn-primary" id="trigger-btn">Run Selected Tests</button>
+      <div style="display:flex; gap:10px">
+        <button class="btn btn-outline" id="smoke-btn" title="Select the happy-flow checks (submenu → radio button) that mirror the app's module/submodule spec">Smoke Tests (10)</button>
+        <button class="btn btn-primary" id="trigger-btn">Run Selected Tests</button>
+      </div>
     </div>
     <div id="trigger-error" class="error-msg" style="margin-bottom:12px"></div>
 
@@ -554,6 +557,32 @@
     { file: '16-legal.spec.ts',                 label: '16 - Legal' },
   ];
 
+  // Curated "happy flow" checks — one per module/submodule/radio-button node in
+  // the KCPL admin spec flowchart (Login, Creation, Auction, Guarantor details,
+  // Payment voucher). Matched by exact test title, same strings /api/tests.ts
+  // extracts. Kept in sync manually with the `@happy-flow` Playwright tag.
+  const SMOKE_FLOW = [
+    { specFile: '02-navigation.spec.ts', testNames: ['logout flow works'] },
+    { specFile: '03-creation.spec.ts', testNames: [
+      'scheme view — Modify Scheme opens edit form and Cancel returns',
+      'generate payable — all radio buttons open their tables',
+    ] },
+    { specFile: '05-auction.spec.ts', testNames: [
+      'post auction — radio toggle to Successful bid post',
+      'live auction — radio toggle to Re auction',
+      'sb list — radio toggle to Re auction',
+    ] },
+    { specFile: '06-guarantor.spec.ts', testNames: [
+      'add guarantor — all radio buttons switch the view',
+      'aprove guarantor — all radio buttons switch the view',
+      'secondary approval — all radio buttons switch the view',
+    ] },
+    { specFile: '07-payment-voucher.spec.ts', testNames: [
+      'sb & asb — Subscriber and Company radio buttons switch view',
+    ] },
+  ];
+  const SMOKE_FLOW_COUNT = SMOKE_FLOW.reduce((n, s) => n + s.testNames.length, 0);
+
   const loginSection    = $('#login-section');
   const mainContent     = $('#main-content');
   const statusSection   = $('#status-section');
@@ -563,6 +592,7 @@
   const passwordInput   = $('#password');
   const logoutBtn       = $('#logout-btn');
   const triggerBtn      = $('#trigger-btn');
+  const smokeBtn        = $('#smoke-btn');
   const triggerError    = $('#trigger-error');
   const picker          = $('#test-picker');
   const selDisplay      = $('#selection-display');
@@ -685,7 +715,7 @@
       const testList = document.createElement('div');
       testList.className = 'suite-sub';
 
-      specRows[spec.file] = { checkbox: specCheckbox, testCheckboxes: new Map() };
+      specRows[spec.file] = { checkbox: specCheckbox, testCheckboxes: new Map(), testList, arrow, countEl };
 
       row.addEventListener('click', (e) => {
         if (e.target === specCheckbox) return;
@@ -708,6 +738,27 @@
       picker.appendChild(wrapper);
     });
   }
+
+  // "Smoke Tests" preset — selects the curated happy-flow checks and expands
+  // each affected spec row so the exact tests are visible (checked) before running.
+  async function selectSmokeFlow() {
+    allChecked = false;
+    selections.clear();
+    SMOKE_FLOW.forEach(({ specFile, testNames }) => {
+      selections.set(specFile, new Set(testNames));
+    });
+    syncUI();
+
+    for (const { specFile } of SMOKE_FLOW) {
+      const rowInfo = specRows[specFile];
+      if (!rowInfo) continue;
+      rowInfo.testList.classList.add('open');
+      rowInfo.arrow.classList.add('open');
+      await loadTests(specFile, rowInfo.testList, rowInfo.countEl);
+    }
+  }
+
+  smokeBtn.addEventListener('click', selectSmokeFlow);
 
   async function loadTests(file, container, countEl) {
     if (testCache[file]) { renderTests(file, testCache[file], container, countEl); return; }
@@ -769,9 +820,23 @@
     updateSelectionDisplay();
   }
 
+  function isSmokeFlowSelected() {
+    if (allChecked || selections.size !== SMOKE_FLOW.length) return false;
+    return SMOKE_FLOW.every(({ specFile, testNames }) => {
+      const val = selections.get(specFile);
+      if (!(val instanceof Set) || val.size !== testNames.length) return false;
+      return testNames.every((name) => val.has(name));
+    });
+  }
+
   function updateSelectionDisplay() {
     if (allChecked || selections.size === 0) {
       selectionLabel = 'All tests (full suite)';
+      selDisplay.textContent = selectionLabel;
+      return;
+    }
+    if (isSmokeFlowSelected()) {
+      selectionLabel = `Smoke Tests (${SMOKE_FLOW_COUNT} happy-flow checks)`;
       selDisplay.textContent = selectionLabel;
       return;
     }

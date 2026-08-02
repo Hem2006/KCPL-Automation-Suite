@@ -23,7 +23,7 @@ test.describe('Sidebar Navigation - Smoke @smoke', () => {
     await expect(authenticatedPage).toHaveURL(/#\/dashboard\/directReciept/);
   });
 
-  test('logout flow works', async ({ authenticatedPage: page }) => {
+  test('logout flow works', { tag: ['@happy-flow'] }, async ({ authenticatedPage: page }) => {
     await page.locator('[data-testid="Avat-ar"]').click();
     await page.getByText('Logout', { exact: true }).click();
     await expect(page.getByRole('button', { name: 'Yes' })).toBeVisible({ timeout: 10000 });
